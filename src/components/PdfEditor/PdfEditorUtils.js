@@ -1,0 +1,147 @@
+import { HFGenerateText } from "../HuggingFace/HuggingFace";
+import PSPDFKit from "pspdfkit";
+
+const PdfAnalyseText = async (props) => {
+  const instance = props.instance?.current;
+  if (instance === null || instance === undefined) {
+    console.error("AnalyseText : instance is undefined or null");
+    return;
+  }
+
+  const currPageIndex = instance.viewState?.currentPageIndex;
+  if (currPageIndex === null || currPageIndex === undefined) {
+    console.error("AnalyseText : currPageIndex is undefined or null");
+    return;
+  }
+  const textLines = await instance.textLinesForPageIndex(currPageIndex);
+  textLines.forEach((textLine, textLineIndex) => {
+    console.log(`Content for text line ${textLineIndex}`);
+    console.log(`Text: ${textLine.contents}`);
+    console.log(`Id: ${textLine.id}`);
+    console.log(`Page index: ${textLine.pageIndex}`);
+    console.log(`Bounding box: ${JSON.stringify(textLine.boundingBox.toJS())}`);
+  });
+};
+
+const GenerateFromJSON = (props) => {
+  return new Promise(async (resolve, reject) => {
+    const instance = props.instance?.current;
+    if (instance === null || instance === undefined) {
+      throw Error("GenerateFromJSON : instance is undefined or null");
+    }
+
+    const json = props.json;
+    if (json === null || json === undefined) {
+      throw Error("GenerateFromJSON : json is undefined or null");
+    }
+
+    console.log("Height ", instance.pageInfoForIndex(0).height);
+    console.log("Width ", instance.pageInfoForIndex(0).width);
+
+    try {
+      const parsed_json = JSON.parse(json);
+      const annotations = parsed_json?.annotations;
+      if (annotations === null || annotations === undefined) {
+        throw Error("GenerateFromJSON : annotations is undefined or null");
+      }
+
+      for (let i = 0; i < annotations.length; i++) {
+        let generated = null;
+        const annotation = annotations[i];
+        console.log(annotation);
+        switch (annotation.type) {
+          case "text_annotation":
+            generated = new PSPDFKit.Annotations.TextAnnotation({
+              pageIndex: annotation.page_index,
+              font: annotation.font,
+              boundingBox: new PSPDFKit.Geometry.Rect(annotation.bounding_box),
+              text: annotation.text,
+              isBold: annotation.is_bold,
+              horizontalAlign: annotation.horizontal_align,
+              fontSize: annotation.font_size,
+            });
+            break;
+          case "widget_annotation":
+            console.log("WidgetAnnotation");
+            console.log(annotation);
+            break;
+          case "link_annotation":
+            console.log("LinkAnnotation");
+            console.log(annotation);
+            break;
+          case "line_annotation":
+            console.log("LineAnnotation");
+            console.log(annotation);
+            break;
+          case "polyline_annotation":
+            console.log("PolylineAnnotation");
+            console.log(annotation);
+            break;
+          case "shape_annotation":
+            console.log("ShapeAnnotation");
+            console.log(annotation);
+            break;
+          case "image_annotation":
+            console.log("ImageAnnotation");
+            console.log(annotation);
+            break;
+          default:
+            console.error(
+              `GenerateFromJSON : unknown annotation type ${annotation.type}`
+            );
+            break;
+        }
+        if (generated !== null) {
+          try {
+            const [createdAnnotation] = await instance.create(generated);
+            console.log(createdAnnotation.id); // => '01BS964AM5Z01J9MKBK64F22BQ'
+          } catch (e) {
+            console.error("GenerateFromJSON : error creating annotation", e);
+          }
+        } else {
+          console.error("GenerateFromJSON : generated is null");
+        }
+      }
+    } catch (e) {
+      console.error("GenerateFromJSON : json is not valid", e);
+      reject(e);
+    }
+  });
+};
+
+const PdfGenerateText = (props) => {
+  const instance = props.instance?.current;
+  if (instance === null || instance === undefined) {
+    console.error("GenerateText : instance is undefined or null");
+    return;
+  }
+
+  const prompt = props.prompt;
+  if (prompt === null || prompt === undefined) {
+    console.error("GenerateText : prompt is undefined or null");
+    return;
+  }
+
+  HFGenerateText(prompt)
+    .catch((e) => {
+      console.error("error in HFGenerateText :", e);
+      return;
+    })
+    .then((hf_response) => {
+      console.log("HFGenerateText : success");
+      GenerateFromJSON({ instance: props.instance, json: hf_response })
+        .then(() => {
+          console.log("HFGenerateText : success");
+          return;
+        })
+        .catch((e) => {
+          console.error("GenerateText : error generating text", e);
+          return;
+        });
+    });
+};
+
+// TODO: SHEHAR: Complete this
+const PdfSave = (props) => {};
+
+export { PdfAnalyseText, PdfGenerateText, PdfSave };
