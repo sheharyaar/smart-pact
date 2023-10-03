@@ -6,9 +6,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 
-class DBUserDetailsReq(BaseModel):
-    token: str
-    email: str
+class DBPdfListReq(BaseModel):
+    user_id: str
 
 
 class SupabaseAPI:
@@ -21,13 +20,13 @@ class SupabaseAPI:
         self.key = supabase_key
         self.client: Client = create_client(self.url, self.key)
 
-    def getUserDetails(self, req: DBUserDetailsReq):
-        # TODO:  check if token is valid
-        print(req.token)
-        print(req.email)
+    def FetchPdflist(self, req: DBPdfListReq):
         try:
             user = (
-                self.client.table("user").select("*").eq("email", req.email).execute()
+                self.client.table("global_pdf")
+                .select("*")
+                .eq("user_id", req.user_id)
+                .execute()
             )
             if user is None or user.data is None or len(user.data) == 0:
                 return JSONResponse(
@@ -36,19 +35,14 @@ class SupabaseAPI:
                     media_type="application/json",
                 )
 
-            print(user.data[0])
+            print(user.data)
             return JSONResponse(
-                content={
-                    "first_name": user.data[0]["first_name"],
-                    "last_name": user.data[0]["last_name"],
-                    "email": user.data[0]["email"],
-                    "profile_img": user.data[0]["profile_img"],
-                },
+                content={user.data},
                 status_code=200,
                 media_type="application/json",
             )
+
         except Exception as e:
-            print(e)
             return JSONResponse(
                 content={"message": "error"},
                 status_code=400,

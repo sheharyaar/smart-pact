@@ -1,10 +1,10 @@
-const FetchUserDetails = (props) => {
+const FetchPdfList = (props) => {
   return new Promise(async (resolve, reject) => {
     if (
       props.token === undefined ||
-      props.email === undefined ||
+      props.user_id === undefined ||
       props.token === null ||
-      props.email === null
+      props.user_id === null
     ) {
       return;
     }
@@ -16,27 +16,28 @@ const FetchUserDetails = (props) => {
       },
       body: JSON.stringify({
         token: props.token,
-        email: props.email,
+        user_id: props.user_id,
       }),
     };
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/userDetails",
+        "http://localhost:8000/api/userPdfList",
         userOptions
       );
+
       if (response.status >= 200 && response.status < 300) {
         const data = await response.json();
-        console.log("FetchUserDetails : ", data);
+        console.log("FetchPdfList : ", data);
         resolve(data);
       } else {
         reject(new Error(`HTTP Error ${response.status}`));
       }
     } catch (error) {
-      console.error("FetchUserDetails : ", error);
+      console.error("FetchPdfList : ", error);
       reject(error);
     }
   });
 };
 
-export { FetchUserDetails };
+export { FetchPdfList };
