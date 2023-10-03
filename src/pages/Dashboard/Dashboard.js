@@ -4,19 +4,35 @@ import { BiSolidUserCircle, BiSolidStar } from "react-icons/bi";
 import { BsShareFill } from "react-icons/bs";
 import { DashboardCardSection } from "./Card";
 import { tabTheme } from "../../components/FlowBiteStyles/Styles";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { AddPdfModal } from "./AddPdf";
 import { AuthNav } from "../../components/AuthNav/AuthNav";
+import { AuthContext } from "../../App";
+import { FetchPdfList } from "../../components/Database/Queries";
 
 const DashboardContext = createContext({});
 
 const DashBoard = () => {
   const [pdfList, setPdfList] = useState([]);
   const [addPdfModal, setAddPdfModal] = useState(false);
+  const { authToken } = useContext(AuthContext);
   // fetch user data if auth token is valid
   // and update the cards and tabs
   // TODO: save to session storage too for caching
-  useEffect(() => {}, [setPdfList]);
+  useEffect(() => {
+    if (!authToken) return;
+
+    FetchPdfList({
+      token: authToken,
+      email: "shehar@gmail.com",
+    })
+      .then((data) => {
+        console.log("Dashboard :", data);
+      })
+      .catch((error) => {
+        console.error("Dashboard :", error);
+      });
+  }, [authToken]);
 
   return (
     <DashboardContext.Provider

@@ -1,34 +1,41 @@
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../App";
-import { FetchUserDetails } from "../Database/Queries";
-import { Navbar, Dropdown, Avatar } from "flowbite-react";
+import { Navbar, Dropdown, Avatar, Button } from "flowbite-react";
+import { useNavigate } from "react-router-dom";
 
 const AuthNav = () => {
-  const { appAuthToken } = useContext(AuthContext);
+  const { supabase } = useContext(AuthContext);
   const [userObj, setUserObj] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!appAuthToken) return;
-    if (userObj) return;
+    if (userObj !== null) return;
 
-    FetchUserDetails({
-      token: appAuthToken,
-      email: "shehar@gmail.com",
-    })
-      .then((data) => {
-        console.log("AuthNav : ", data);
+    if (!supabase) return;
+    supabase.auth
+      .getSession()
+      .then(({ data, error }) => {
+        if (data?.session === null || error)
+          throw new Error("No session found");
+
+        console.log("AuthNav : ", data.session.user);
+        const user = data.session.user;
         setUserObj({
-          first_name: data.first_name,
-          last_name: data.last_name,
-          email: data.email,
-          profile_img: data.profile_img,
+          email: user.email,
+          first_name: user.user_metadata.first_name,
+          last_name: user.user_metadata.last_name,
+          profile_img: user.user_metadata.profile_img,
         });
       })
       .catch((error) => {
         console.error("AuthNav : ", error);
-        throw error;
       });
-  }, [appAuthToken, userObj]);
+  }, [userObj, supabase]);
+
+  const handleLogout = useCallback(() => {
+    supabase.auth.signOut();
+    navigate("/login");
+  }, [navigate, supabase]);
 
   return (
     <div className="h-[8vh]">
@@ -56,6 +63,9 @@ const AuthNav = () => {
               <span className="block truncate text-sm font-medium">
                 {userObj?.email}
               </span>
+              <Button className="mt-2" onClick={handleLogout}>
+                Logout
+              </Button>
             </Dropdown.Header>
           </Dropdown>
           <Navbar.Toggle />

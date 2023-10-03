@@ -1,5 +1,5 @@
 const ErrorPage = () => {
-  return <div className="error-page">Error Not Found</div>;
+  return <div className="error-page">Error</div>;
 };
 
 export { ErrorPage };

@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sign import OauthTokenRequest, HelloSign
 from hf import HFGenerateRequest, HuggingFace
-from db import SupabaseAPI, DBUserDetailsReq
+from db import SupabaseAPI, DBUserDetailsReq, DBPdfListReq
 
 signApi = None
 hfApi = None
@@ -100,13 +100,12 @@ async def huggingfaceGenerateDoc(req: HFGenerateRequest):
     return hfApi.generateDoc(req)
 
 
-# Supabase API endpoints
-@app.post("/api/userDetails")
-async def supabaseUserDetails(req: DBUserDetailsReq):
-    if req.token is None or req.token == "" or req.email is None or req.email == "":
+@app.post("/api/userPdfList")
+async def supabaseUserPdflist(req: DBPdfListReq):
+    if req.user_id is None or req.user_id == "":
         return JSONResponse(
             content={"message": "authToken is empty or null"},
             status_code=400,
             media_type="application/json",
         )
-    return supabaseApi.getUserDetails(req)
+    return supabaseApi.FetchPdflist(req)
