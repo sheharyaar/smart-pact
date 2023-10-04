@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sign import OauthTokenRequest, HelloSign
 from hf import HFGenerateRequest, HuggingFace
-from db import SupabaseAPI, DBUserDetailsReq, DBPdfListReq
+from db import SupabaseAPI, DBPdfListReq
 
 signApi = None
 hfApi = None

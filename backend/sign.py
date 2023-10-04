@@ -29,6 +29,7 @@ class HelloSign:
     """
 
     def getOauthToken(self, req: OauthTokenRequest) -> JSONResponse:
+        print(req)
         with self.api_client as api_client:
             api = apis.OAuthApi(api_client)
             data = models.OAuthTokenGenerateRequest(

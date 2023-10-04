@@ -63,7 +63,7 @@ const LoginPage = (props) => {
           setFormError({ message: error.message, color: "red" });
         });
     },
-    [supabase]
+    [supabase, navigate]
   );
 
   const handleSignup = useCallback(

@@ -1,7 +1,7 @@
 import { Button, Spinner } from "flowbite-react";
-import { useState, useCallback, useContext } from "react";
-import { useEffect } from "react";
-import { AuthContext } from "../../App";
+import { useState, useCallback } from "react";
+import { useEffect, useContext } from "react";
+import { SignAuthContext } from "./HelloSignAuth";
 
 const randomString = (length) => {
   const alphabet =
@@ -15,8 +15,8 @@ const randomString = (length) => {
 
 const HelloSignOauth = () => {
   const svgDropbox = `${process.env.PUBLIC_URL}/dropbox-sign-oauth.svg`;
-  const { setSignAuthToken } = useContext(AuthContext);
   const [btnIsLoading, setBtnLoading] = useState(false);
+  const { signToken, setSignToken } = useContext(SignAuthContext);
 
   // receive message from the oauth popup/page
   const receiveMessage = useCallback(
@@ -37,12 +37,14 @@ const HelloSignOauth = () => {
         console.error(`Received message with invalid id.`);
       } else {
         // set to local storage
-        sessionStorage.setItem("DROPBOX_SIGN_OAUTH_ID", token);
-        setSignAuthToken(token);
+        if (token !== null || token !== undefined) {
+          sessionStorage.setItem("DROPBOX_SIGN_OAUTH_ID", token);
+          setSignToken(token);
+        }
         setBtnLoading(false);
       }
     },
-    [setSignAuthToken]
+    [setSignToken]
   );
 
   const handleHelloSignOauth = useCallback(async () => {
@@ -62,26 +64,30 @@ const HelloSignOauth = () => {
     return () => {
       window.removeEventListener("message", receiveMessage);
     };
-  }, [receiveMessage, setSignAuthToken]);
+  }, [receiveMessage]);
 
   return (
     <>
-      <p className="text-base leading-relaxed text-gray-800">
-        Your DropboxSign account is not loaded.
-      </p>
-      <br />
-      <Button
-        className="bg-[#5e5ceb] enabled:hover:bg-[#4d4dc7]"
-        onClick={handleHelloSignOauth}
-        isProcessing={btnIsLoading}
-        processingSpinner={<Spinner className="fill-[#5e5ceb]" />}
-        disabled={btnIsLoading}
-      >
-        <div className="text-white flex flex-row h-6 text-base leading-relaxed">
-          Sign in with
-          <img src={svgDropbox} alt="dropbox oauth sign" />
+      {(signToken === null || signToken === undefined) && (
+        <div className="flex flex-col text-center items-center">
+          <p className="text-base leading-relaxed text-gray-800">
+            Your DropboxSign account is not loaded.
+          </p>
+          <br />
+          <Button
+            className="bg-primary-700 enabled:hover:bg-primary-800 w-fit"
+            onClick={handleHelloSignOauth}
+            isProcessing={btnIsLoading}
+            processingSpinner={<Spinner className="fill-[#5e5ceb]" />}
+            disabled={btnIsLoading}
+          >
+            <div className="text-white flex flex-row h-6 text-base leading-relaxed">
+              Sign in with
+              <img src={svgDropbox} alt="dropbox oauth sign" />
+            </div>
+          </Button>
         </div>
-      </Button>
+      )}
     </>
   );
 };

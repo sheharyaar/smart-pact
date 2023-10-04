@@ -144,4 +144,13 @@ const PdfGenerateText = (props) => {
 // TODO: SHEHAR: Complete this
 const PdfSave = (props) => {};
 
-export { PdfAnalyseText, PdfGenerateText, PdfSave };
+// TODO: SHEHAR: Complete this
+// Save to local/session storage, the json only. the pdf will be fetched from the server
+const PdfPublish = (props) => {};
+
+// TODO: SHEHAR: Complete this
+// Fetch the json from session storage / server and the history of pdfs
+// Then sort them according to the dat and load them on demand
+const PdfTimeline = (props) => {};
+
+export { PdfAnalyseText, PdfGenerateText, PdfSave, PdfPublish, PdfTimeline };
