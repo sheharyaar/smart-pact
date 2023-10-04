@@ -1,8 +1,8 @@
-import React from 'react'
+import React from "react";
 
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
 
-import './testimonials-card.css'
+import "./testimonials-card.css";
 
 const TestimonialsCard = (props) => {
   return (
@@ -25,19 +25,19 @@ const TestimonialsCard = (props) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 TestimonialsCard.defaultProps = {
-  image_alt1: 'image',
-  image_alt: 'image',
-  text2: 'Vice President, GoPro',
-  text1: 'Floyd Miles',
-  text: 'To quickly start my startup landing page design, I was looking for a landing page UI Kit. Landify is one of the best landing page UI kit I have come across. It’s so flexible, well organised and easily editable.',
+  image_alt1: "image",
+  image_alt: "image",
+  text2: "Vice President, GoPro",
+  text1: "Floyd Miles",
+  text: "To quickly start my startup landing page design, I was looking for a landing page UI Kit. Landify is one of the best landing page UI kit I have come across. It’s so flexible, well organised and easily editable.",
   image_src:
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png',
-  image_src1: '/quote-mark.svg',
-}
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png",
+  image_src1: "/landify/quote-mark.svg",
+};
 
 TestimonialsCard.propTypes = {
   image_alt1: PropTypes.string,
@@ -47,6 +47,6 @@ TestimonialsCard.propTypes = {
   text: PropTypes.string,
   image_src: PropTypes.string,
   image_src1: PropTypes.string,
-}
+};
 
-export default TestimonialsCard
+export default TestimonialsCard;

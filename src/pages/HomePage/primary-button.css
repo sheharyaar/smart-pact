@@ -23,3 +23,7 @@
 .primary-button-button:active {
   background-color: var(--dl-color-purple-1000);
 }
+
+.clickable {
+  cursor: pointer;
+}
