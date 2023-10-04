@@ -6,12 +6,12 @@ import { LoginSection, SignupSection } from "./Section";
 
 const FormError = (props) => {
   return (
-    <div className="flex items-center justify-center">
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+    <div className="flex items-center ">
+      <div className={`bg-${props.color}-100 border border-${props.color}-400 text-${props.color}-700 mt-14 mx-auto px-4 py-3 rounded relative`}> 
         <span className="block sm:inline">{props.message}</span>
       </div>
     </div>
-  );
+  ); 
 };
 
 const LoginPage = (props) => {
@@ -55,12 +55,12 @@ const LoginPage = (props) => {
           if (data.error) throw new Error(data.error.message);
 
           // TODO : Show this as a success message, instead of
-          setFormError("Success!");
+          setFormError({message: "Success!", color: "green"});
           navigate("/dashboard");
         })
         .catch((error) => {
           console.error("LoginPage : ", error);
-          setFormError(error.message);
+          setFormError({ message: error.message, color: "red" });
         });
     },
     [supabase]
@@ -85,11 +85,11 @@ const LoginPage = (props) => {
           if (data.error) throw new Error(data.error.message);
 
           // TODO : Show this as a success message, instead of
-          setFormError("Check your email for confirmation!");
+          setFormError({ message: "Check your email for confirmation!", color: "green" });
         })
         .catch((error) => {
           console.error("LoginPage : ", error);
-          setFormError(error.message);
+          setFormError({ message: error.message, color: "red" });
         });
     },
     [supabase]
@@ -108,7 +108,7 @@ const LoginPage = (props) => {
           )}
         </>
       )}
-      {formError && <FormError message={formError} />}
+      {formError && <FormError message={formError.message} color={formError.color}  />}
     </>
   );
 };
