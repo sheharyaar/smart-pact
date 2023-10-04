@@ -1,7 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../App";
-import { Navbar, Dropdown, Avatar, Button } from "flowbite-react";
+import { Navbar, Dropdown, Avatar } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
+import { HiLogout } from "react-icons/hi";
 
 const AuthNav = () => {
   const { supabase } = useContext(AuthContext);
@@ -59,14 +60,17 @@ const AuthNav = () => {
             }
           >
             <Dropdown.Header>
-              <span className="block text-sm">{userObj?.first_name}</span>
+              <span className="block font-bold text-lg">{userObj?.first_name} {userObj?.last_name}</span>
               <span className="block truncate text-sm font-medium">
                 {userObj?.email}
               </span>
-              <Button className="mt-2" onClick={handleLogout}>
-                Logout
-              </Button>
             </Dropdown.Header>
+            <Dropdown.Divider />
+          <Dropdown.Item onClick={handleLogout} >
+          <HiLogout className="text-purple-800" />
+            <span className="text-purple-800">Sign out</span>
+          </Dropdown.Item>
+
           </Dropdown>
           <Navbar.Toggle />
         </div>
