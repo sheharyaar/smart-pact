@@ -3,12 +3,10 @@
 import { Modal } from "flowbite-react";
 import { useContext } from "react";
 import { EditorContext } from "./EditorPage";
-import { HelloSignOauth } from "../../components/HelloSign/HelloSignOauth";
-import { AuthContext } from "../../App";
+import { HelloSignAuth } from "../../components/HelloSign/HelloSignAuth";
 
-const HelloSignModal = () => {
+const HelloSignModal = (props) => {
   // auth contexts
-  const { signAuthToken } = useContext(AuthContext);
   const { showHelloSignModal, setHelloSignModal } = useContext(EditorContext);
 
   return (
@@ -20,12 +18,10 @@ const HelloSignModal = () => {
       >
         <Modal.Header>DropboxSign Signature</Modal.Header>
         <Modal.Body className="text-center flex flex-col items-center">
-          {signAuthToken === null ? (
-            <HelloSignOauth />
-          ) : (
-            // TODO: SHEHAR: Get signratures
-            `Got token : ${signAuthToken}`
-          )}
+          <HelloSignAuth>
+            {/* // TODO: SHEHAR: Get signratures */}
+            <div>Got token signature</div>
+          </HelloSignAuth>
         </Modal.Body>
       </Modal>
     </>

@@ -38,6 +38,7 @@ const HelloSignOauthCb = () => {
         })
         .then(
           (data) => {
+            console.log(data);
             const access_token = data.access_token;
             sign_data = { ...sign_data, token: access_token };
             window.opener.postMessage(sign_data);

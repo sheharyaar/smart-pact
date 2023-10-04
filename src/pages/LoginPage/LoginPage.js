@@ -63,7 +63,7 @@ const LoginPage = (props) => {
           setFormError({ message: error.message, color: "red" });
         });
     },
-    [supabase]
+    [supabase, navigate]
   );
 
   const handleSignup = useCallback(
@@ -98,7 +98,13 @@ const LoginPage = (props) => {
   return (
     <>
       {authChecking ? (
-        <Spinner size="xl" aria-label="Center-aligned" />
+        <div className="w-100  text-center justify-center absolute top-1/2 left-1/2">
+          <Spinner
+            size="xl"
+            className="fill-[#4d4dc7]"
+            aria-label="Center-aligned"
+          />
+        </div>
       ) : (
         <>
           {props.login ? (

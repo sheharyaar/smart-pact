@@ -18,7 +18,7 @@ class HuggingFace:
         Function to generate a document from Huggingface
     """
 
-    def generateDoc(self, req: HFGenerateRequest):
+    def generateDoc(self, req: HFGenerateRequest) -> JSONResponse:
         prompt = self.promptPrefix + req.prompt
         print(prompt)
 

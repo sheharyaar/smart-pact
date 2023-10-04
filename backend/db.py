@@ -20,7 +20,7 @@ class SupabaseAPI:
         self.key = supabase_key
         self.client: Client = create_client(self.url, self.key)
 
-    def FetchPdflist(self, req: DBPdfListReq):
+    def FetchPdflist(self, req: DBPdfListReq) -> JSONResponse:
         try:
             user = (
                 self.client.table("global_pdf")

@@ -12,24 +12,26 @@ class OauthTokenRequest(BaseModel):
     code: str
 
 
+class SignTemplateRequest(BaseModel):
+    token: str
+    account_id: str
+    page: int
+
+
 class HelloSign:
     def __init__(self) -> None:
-        self.api_key = sign_api_key
         self.client_id = sign_client_id
         self.client_secret = sign_client_secret
-        self.configuration = Configuration(
-            # Configure HTTP basic authorization: api_key
-            username=self.api_key,
-        )
-        self.api_client = ApiClient(self.configuration)
-        self.api = apis.OAuthApi(self.api_client)
 
     """
         Function to generate HelloSign Oauth Token
     """
 
     def getOauthToken(self, req: OauthTokenRequest) -> JSONResponse:
-        with self.api_client as api_client:
+        print(req)
+        configuration = Configuration()
+
+        with ApiClient(configuration) as api_client:
             api = apis.OAuthApi(api_client)
             data = models.OAuthTokenGenerateRequest(
                 # from the request body
@@ -41,7 +43,7 @@ class HelloSign:
             )
 
             try:
-                response = api.oauth_token_generate(data)
+                response = api.oauth_token_generate(data, _request_timeout=10)
                 print(response)
                 if response is None:
                     return JSONResponse(
@@ -74,3 +76,48 @@ class HelloSign:
             status_code=200,
             media_type="application/json",
         )
+
+    """
+        Function to fetch HelloSign templates
+    """
+
+    def fetchTemplates(self, req: SignTemplateRequest) -> JSONResponse:
+        print(req)
+
+        configuration = Configuration(
+            access_token=req.token,
+        )
+
+        with ApiClient(configuration) as api_client:
+            template_api = apis.TemplateApi(api_client)
+
+            # Account of the outh token owner
+            account_id = None
+            page = req.page
+
+            try:
+                response = template_api.template_list(
+                    account_id=account_id,
+                    page=page,
+                    _request_timeout=10,
+                )
+                print(response)
+                if response is None:
+                    return JSONResponse(
+                        content={"message": "response is empty"},
+                        status_code=400,
+                        media_type="application/json",
+                    )
+                else:
+                    return JSONResponse(
+                        content=response.to_dict(),
+                        status_code=200,
+                        media_type="application/json",
+                    )
+            except ApiException as e:
+                print("Exception when calling Dropbox Sign API: %s\n" % e)
+                return JSONResponse(
+                    content={"message": "error"},
+                    status_code=400,
+                    media_type="application/json",
+                )

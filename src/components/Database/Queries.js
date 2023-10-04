@@ -40,4 +40,11 @@ const FetchPdfList = (props) => {
   });
 };
 
-export { FetchPdfList };
+// TODO: SHEHAR: Complete this
+const VerifyPdfId = (props) => {
+  return new Promise(async (resolve, reject) => {
+    resolve(true);
+  });
+};
+
+export { FetchPdfList, VerifyPdfId };

@@ -60,17 +60,18 @@ const AuthNav = () => {
             }
           >
             <Dropdown.Header>
-              <span className="block font-bold text-lg">{userObj?.first_name} {userObj?.last_name}</span>
+              <span className="block font-bold text-lg">
+                {userObj?.first_name} {userObj?.last_name}
+              </span>
               <span className="block truncate text-sm font-medium">
                 {userObj?.email}
               </span>
             </Dropdown.Header>
             <Dropdown.Divider />
-          <Dropdown.Item onClick={handleLogout} >
-          <HiLogout className="text-purple-800" />
-            <span className="text-purple-800">Sign out</span>
-          </Dropdown.Item>
-
+            <Dropdown.Item onClick={handleLogout}>
+              <HiLogout className="text-purple-800" />
+              <span className="text-purple-800">Sign out</span>
+            </Dropdown.Item>
           </Dropdown>
           <Navbar.Toggle />
         </div>
