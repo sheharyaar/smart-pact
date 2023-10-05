@@ -15,24 +15,50 @@ const DashboardContext = createContext({});
 const DashBoard = () => {
   const [pdfList, setPdfList] = useState([]);
   const [addPdfModal, setAddPdfModal] = useState(false);
-  const { authToken } = useContext(AuthContext);
+  const [filteredList, setFilteredList] = useState(null);
+  const { supabase } = useContext(AuthContext);
   // fetch user data if auth token is valid
   // and update the cards and tabs
   // TODO: SHEHAR: save to session storage too for caching
   useEffect(() => {
-    if (!authToken) return;
-
     FetchPdfList({
-      token: authToken,
-      email: "shehar@gmail.com",
+      supabase: supabase,
     })
       .then((data) => {
-        console.log("Dashboard :", data);
+        const pdf_list = data?.pdf_list;
+        if (pdf_list === undefined || pdf_list === null) {
+          setFilteredList({
+            starred: [],
+            created: [],
+            shared: [],
+          });
+        }
+
+        const starred_pdfs = pdf_list.filter((pdf) => {
+          return pdf.starred === true;
+        });
+
+        const created_list = pdf_list.filter((pdf) => {
+          return pdf.pdf.created_by === pdf.user_id;
+        });
+
+        const shared_list = pdf_list.filter((pdf) => {
+          return pdf.pdf.created_by !== pdf.user_id;
+        });
+
+        const list = {
+          starred: starred_pdfs || [],
+          created: created_list || [],
+          shared: shared_list || [],
+        };
+
+        console.log("Dashboard : pdf_list", list);
+        setFilteredList(list);
       })
       .catch((error) => {
         console.error("Dashboard :", error);
       });
-  }, [authToken]);
+  }, [supabase]);
 
   return (
     <DashboardContext.Provider
@@ -46,13 +72,23 @@ const DashBoard = () => {
         theme={tabTheme}
       >
         <Tabs.Item active title="My documents" icon={BiSolidUserCircle}>
-          <DashboardCardSection showAddCard={true} cardList={pdfList} />
+          <DashboardCardSection
+            isLoading={!filteredList}
+            showAddCard={true}
+            cardList={filteredList?.created}
+          />
         </Tabs.Item>
         <Tabs.Item title="Shared with me" icon={BsShareFill}>
-          <DashboardCardSection cardList={null} />
+          <DashboardCardSection
+            isLoading={!filteredList}
+            cardList={filteredList?.shared}
+          />
         </Tabs.Item>
         <Tabs.Item title="Starred" icon={BiSolidStar}>
-          <DashboardCardSection cardList={null} />
+          <DashboardCardSection
+            isLoading={!filteredList}
+            cardList={filteredList?.starred}
+          />
         </Tabs.Item>
       </Tabs.Group>
       {/* Add PDF modal */}

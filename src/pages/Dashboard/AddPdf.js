@@ -1,15 +1,28 @@
-import { Modal, Tabs, FileInput, Button, Spinner } from "flowbite-react";
+import {
+  Modal,
+  Tabs,
+  FileInput,
+  Button,
+  Spinner,
+  TextInput,
+} from "flowbite-react";
 import { useCallback, useContext } from "react";
 import { DashboardContext } from "./Dashboard";
 import { tabTheme } from "../../components/FlowBiteStyles/Styles";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import DropBoxTemplate from "./DropboxTemplate";
 import { HelloSignAuth } from "../../components/HelloSign/HelloSignAuth";
+import { CreateEmptyDoc } from "../../components/Database/Queries";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../App";
 
 const AddPdfModal = () => {
   const { addPdfModal, setAddPdfModal } = useContext(DashboardContext);
   const formRef = useRef(null);
   const fileRef = useRef(null);
+  const textRef = useRef(null);
+  const navigate = useNavigate();
+  const { supabase } = useContext(AuthContext);
   const [signTemplateLoading, setSignTemplateLoading] = useState(false);
 
   const handleFormSubmit = useCallback((e) => {
@@ -29,7 +42,31 @@ const AddPdfModal = () => {
     formRef?.current.click();
   }, []);
 
-  useEffect(() => {}, []);
+  const handleEmptyDoc = useCallback(
+    (e) => {
+      e.preventDefault();
+
+      const doc_name = textRef?.current?.value;
+      if (doc_name === undefined || doc_name === null || doc_name === "")
+        throw new Error("Document name cannot be empty");
+
+      CreateEmptyDoc({
+        supabase: supabase,
+        document_title: doc_name,
+      })
+        .then((data) => {
+          const pdf_id = data?.pdf_id;
+          if (pdf_id === undefined || pdf_id === null || pdf_id === "")
+            throw new Error("invalid PDF");
+
+          navigate(`/editor/${data.pdf_id}`);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    [supabase]
+  );
 
   return (
     <Modal dismissible show={addPdfModal} onClose={() => setAddPdfModal(false)}>
@@ -61,12 +98,20 @@ const AddPdfModal = () => {
                     or
                   </span>
                 </div>
-                <Button
-                  outline
-                  className="bg-primary-700 enabled:hover:bg-primary-800"
-                >
-                  Create an empty document
-                </Button>
+                <div className="flex flex-row gap-4">
+                  <TextInput
+                    maxLength={64}
+                    placeholder="Document Name"
+                    ref={textRef}
+                  ></TextInput>
+                  <Button
+                    outline
+                    className="bg-primary-700 enabled:hover:bg-primary-800"
+                    onClick={handleEmptyDoc}
+                  >
+                    Create an empty document
+                  </Button>
+                </div>
               </div>
             )}
           </Tabs.Item>

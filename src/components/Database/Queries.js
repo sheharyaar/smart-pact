@@ -1,13 +1,7 @@
 const FetchPdfList = (props) => {
   return new Promise(async (resolve, reject) => {
-    if (
-      props.token === undefined ||
-      props.user_id === undefined ||
-      props.token === null ||
-      props.user_id === null
-    ) {
-      return;
-    }
+    const { data, error } = await props.supabase.auth.getSession();
+    if (error) throw error;
 
     const userOptions = {
       method: "POST",
@@ -15,8 +9,7 @@ const FetchPdfList = (props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        token: props.token,
-        user_id: props.user_id,
+        user_id: data.session.user.id,
       }),
     };
 
@@ -40,11 +33,81 @@ const FetchPdfList = (props) => {
   });
 };
 
-// TODO: SHEHAR: Complete this
-const VerifyPdfId = (props) => {
+// requires pdf_id, user_id (to check role)
+const FetchPdfById = (props) => {
   return new Promise(async (resolve, reject) => {
-    resolve(true);
+    try {
+      const data = await props.supabase.auth.getSession();
+      console.log(data);
+      if (data.error) throw data.error;
+
+      const user_id = data.data.session.user.id;
+      console.log("FetchPdfById : ", user_id);
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: user_id,
+          pdf_id: props.pdf_id,
+        }),
+      };
+
+      const resp = await fetch("http://localhost:8000/api/fetchPdf", options);
+      if (resp.status >= 200 && resp.status < 300) {
+        const data = await resp.json();
+        console.log("FetchPdfById : ", data);
+        resolve(data);
+      } else {
+        throw new Error(`HTTP Error ${resp.status}`);
+      }
+    } catch (e) {
+      console.error("FetchPdfById : ", e);
+      reject(e);
+    }
   });
 };
 
-export { FetchPdfList, VerifyPdfId };
+const CreateEmptyDoc = (props) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, error } = await props.supabase.auth.getSession();
+      if (error) throw error;
+
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: data.session.user.id,
+          pdf_name: props.document_title,
+        }),
+      };
+      console.log(options.body);
+
+      const resp = await fetch(
+        "http://localhost:8000/api/createEmptyPdf",
+        options
+      );
+
+      if (resp.status >= 200 && resp.status < 300) {
+        const data = await resp.json();
+        console.log("CreateEmptyDoc : ", data);
+        resolve(data);
+      } else {
+        reject(new Error(`HTTP Error ${resp.status}`));
+      }
+    } catch (e) {
+      console.error(e);
+      reject(e);
+    }
+  });
+};
+
+const CreateUploadDoc = (props) => {
+  return new Promise(async (resolve, reject) => {});
+};
+
+export { FetchPdfList, CreateEmptyDoc, CreateUploadDoc, FetchPdfById };

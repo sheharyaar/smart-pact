@@ -41,7 +41,7 @@ const AuthNav = () => {
   return (
     <div className="h-[8vh]">
       <Navbar fluid rounded>
-        <Navbar.Brand href="http://localhost:3000/">
+        <Navbar.Brand href="http://localhost:3000/dashboard">
           <img
             alt="Smart pact"
             className="mr-3 h-6 sm:h-9"

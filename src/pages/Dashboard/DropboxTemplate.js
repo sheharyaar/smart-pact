@@ -1,15 +1,88 @@
 // Check for dropbox token, if not found show oauth modal
 import { Spinner, Card } from "flowbite-react";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useCallback } from "react";
 import { SignAuthContext } from "../../components/HelloSign/HelloSignAuth";
 import { FetchTemplates } from "../../components/HelloSign/HelloSignUtils";
 import { listCardTheme } from "../../components/FlowBiteStyles/Styles";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../App";
+
+const CreateFromTemplate = (props) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, error } = await props.supabase.auth.getSession();
+      if (error) throw error;
+
+      const user_id = data.session.user;
+
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: props.token,
+          user_id: user_id.id,
+          template_id: props.template_id,
+          template_name: props.template_title,
+        }),
+      };
+      const response = await fetch(
+        "http://localhost:8000/helloSign/createFromTemplate",
+        options
+      );
+
+      if (response.status >= 200 && response.status < 300) {
+        const data = await response.json();
+        console.log("CreateFromTemplate : ", data);
+        resolve(data);
+      } else {
+        reject(new Error(`HTTP Error ${response.status}`));
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
 
 // else fetch the files and show them
 const DropBoxTemplate = () => {
   const { signToken } = useContext(SignAuthContext);
+  const { supabase } = useContext(AuthContext);
+
   const [signTemplateLoading, setSignTemplateLoading] = useState(true);
   const [templates, setTemplates] = useState([]);
+  const navigate = useNavigate();
+
+  const handleTemplateClick = useCallback(
+    (e) => {
+      setSignTemplateLoading(true);
+      const template_id = e.currentTarget.id;
+      const template = templates.find(
+        (template) => template.template_id === template_id
+      );
+
+      if (!template) throw new Error("Template not found");
+      console.log(template.template_id);
+      console.log(template.title);
+      CreateFromTemplate({
+        supabase: supabase,
+        token: signToken,
+        template_id: template.template_id,
+        template_title: template.title,
+      })
+        .then(() => {
+          navigate(`/editor/${template.template_id}`);
+        })
+        .catch((error) => {
+          console.error("DropBoxTemplate : ", error);
+          // TODO: Handle with an error element or alert
+        });
+
+      setSignTemplateLoading(false);
+    },
+    [templates, navigate, signToken, supabase]
+  );
 
   useEffect(() => {
     FetchTemplates({ token: signToken, page: 1 })
@@ -50,11 +123,10 @@ const DropBoxTemplate = () => {
                 {templates.map((template, index) => {
                   return (
                     <Card
+                      id={template.template_id}
                       key={index}
                       theme={listCardTheme}
-                      onClick={() => {
-                        console.log("clicked");
-                      }}
+                      onClick={handleTemplateClick}
                     >
                       <p className="font-normal text-gray-700 dark:text-gray-400">
                         {template.title}
