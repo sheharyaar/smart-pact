@@ -1,6 +1,8 @@
 import { Button, Label, TextInput, Checkbox } from "flowbite-react";
 import { HiMail} from 'react-icons/hi';
 import { TfiKey } from 'react-icons/tfi';
+import { BsCameraFill } from 'react-icons/bs';
+import './image_upload.css';
 import {formTheme, buttonTheme}  from "../../components/FlowBiteStyles/Styles";
 const LoginSection = (props) => {
   return (
@@ -45,13 +47,23 @@ const LoginSection = (props) => {
 const SignupSection = (props) => {
   return (
     <>
-    <div className=" text-6xl text-purple-800 drop-shadow-xl font-extrabold mt-20 text-center">Smart Pact</div>
+    <div className=" text-6xl text-purple-800 drop-shadow-xl font-extrabold mt-10 text-center">Smart Pact</div>
     <form
-      className="flex max-w-lg flex-col gap-4 mt-8 mx-auto  bg-white shadow-2xl shadow-gray-300 px-10 py-10 rounded-lg overflow-hidden "
+      className="flex max-w-lg flex-col gap-4 mt-20 mx-auto  bg-white shadow-2xl shadow-gray-300 px-10 py-10 rounded-lg overflow-hidden "
       onSubmit={props.handleSignup}
     >
+      <div >
+          <div className="circle ml-36 mt-10">
+            <img className="profile-pic" src="https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"/>
+
+          </div>
+          <div className="p-image">
+            <BsCameraFill className=" text-gray-500 ml-60"/>
+              <input className="file-upload" type="file" accept="image/*"/>
+          </div>
+      </div>
+
       <div>
-        
         <div className="mb-2 block">
           <Label theme={formTheme.label} htmlFor="fname" value="First name" />
         </div>

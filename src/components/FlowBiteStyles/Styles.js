@@ -194,7 +194,7 @@ const formTheme = {
           lg: "text-md p-4",
         },
         colors: {
-          gray: " text-base bg-purple-50  border-purple-300 text-purple-900 focus:border-purple-700 focus:ring-purple-700 focus:bg-purple-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-purple-900 dark:focus:ring-purple-900",
+          gray: " text-base bg-purple-40  border-purple-300 text-purple-900 focus:border-purple-700 focus:ring-purple-700 focus:bg-purple-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-purple-900 dark:focus:ring-purple-900",
           info: "border-purple-500 bg-purple-50 text-purple-900 placeholder-purple-700 focus:border-purple-500 focus:ring-purple-500 dark:border-purple-400 dark:bg-purple-100 dark:focus:border-purple-500 dark:focus:ring-purple-500",
           failure:
             "border-red-500 bg-red-50 text-red-900 placeholder-red-700 focus:border-red-500 focus:ring-red-500 dark:border-red-400 dark:bg-red-100 dark:focus:border-red-500 dark:focus:ring-red-500",
