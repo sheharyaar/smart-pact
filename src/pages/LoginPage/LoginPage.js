@@ -7,7 +7,7 @@ import { LoginSection, SignupSection } from "./Section";
 const FormError = (props) => {
   return (
     <div className="flex items-center ">
-      <div className={`bg-${props.color}-100 border border-${props.color}-400 text-${props.color}-700 mt-14 mx-auto px-4 py-3 rounded relative`}> 
+      <div className={`bg-${props.color}-100 border border-${props.color}-400 text-${props.color}-700 mt-10 mx-auto px-4 py-3 rounded relative`}> 
         <span className="block sm:inline">{props.message}</span>
       </div>
     </div>

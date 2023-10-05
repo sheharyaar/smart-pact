@@ -1,0 +1,30 @@
+  .profile-pic {
+      width: 200px;
+      max-height: 200px;
+      display: inline-block;
+  }
+  
+  .file-upload {
+      display: none;
+  }
+
+  .circle {
+      border-radius: 100% !important;
+      overflow: hidden;
+      width: 128px;
+      height: 128px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      position: absolute;
+      top: 72px;
+  }
+  img {
+      max-width: 100%;
+      height: auto;
+  }
+
+  
+  .p-image {
+    position: absolute;
+    top: 210px;
+  }
+  

@@ -67,7 +67,6 @@ const AuthNav = () => {
                 {userObj?.email}
               </span>
             </Dropdown.Header>
-            <Dropdown.Divider />
             <Dropdown.Item onClick={handleLogout}>
               <HiLogout className="text-purple-800" />
               <span className="text-purple-800">Sign out</span>
