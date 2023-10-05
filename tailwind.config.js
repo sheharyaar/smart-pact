@@ -13,6 +13,9 @@ module.exports = {
       center: true,
     },
     extend: {
+      gridTemplateColumns: {
+        fill: "repeat(auto-fill, minmax(208px, 1fr))",
+      },
       colors: {
         primary: {
           50: "#eff3fe",

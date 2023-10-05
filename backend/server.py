@@ -1,15 +1,23 @@
+import os
 from fastapi import FastAPI
 from pprint import pprint
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from sign import OauthTokenRequest, SignTemplateRequest, HelloSign
+from sign import (
+    OauthTokenRequest,
+    SignTemplateListRequest,
+    SignTemplateRequest,
+    HelloSign,
+)
 from hf import HFGenerateRequest, HuggingFace
-from db import SupabaseAPI, DBPdfListReq
+from db import SupabaseAPI, DBPdfListReq, DBPdfReq, DBEmptyPdfReq
+from s3 import AwsUploadService
 
 signApi = None
 hfApi = None
 supabaseApi = None
+awsService = None
 
 
 # lifespan handling for initialising APIs
@@ -17,14 +25,22 @@ supabaseApi = None
 async def lifespan(app: FastAPI):
     # Loading functions
     print("Running startup functions")
+
+    # Ensure the folder exists; create it if it doesn't
+    if not os.path.exists("./temp"):
+        os.makedirs("./temp")
+
+    global awsService
+    awsService = AwsUploadService()
+
+    global supabaseApi
+    supabaseApi = SupabaseAPI(aws_service=awsService)
+
     global signApi
-    signApi = HelloSign()
+    signApi = HelloSign(aws_service=awsService, db_service=supabaseApi)
 
     global hfApi
     hfApi = HuggingFace()
-
-    global supabaseApi
-    supabaseApi = SupabaseAPI()
 
     yield
     # Clean up functions
@@ -66,7 +82,7 @@ async def signOauthToken(req: OauthTokenRequest) -> JSONResponse:
             media_type="application/json",
         )
 
-    return signApi.getOauthToken(req)
+    return signApi.GetOauthToken(req)
 
 
 @app.post("/helloSign/refreshOauthToken")
@@ -85,24 +101,17 @@ async def signRefreshOauthToken(req: OauthTokenRequest) -> JSONResponse:
             media_type="application/json",
         )
 
-    return signApi.refreshOauthToken(req)
+    return signApi.RefreshOauthToken(req)
 
 
 @app.post("/helloSign/fetchTemplates")
-async def signFetchTemplates(req: SignTemplateRequest) -> JSONResponse:
+async def signFetchTemplates(req: SignTemplateListRequest) -> JSONResponse:
     if req.token is None or req.token == "":
         return JSONResponse(
             content={"message": "authToken is empty or null"},
             status_code=400,
             media_type="application/json",
         )
-
-    # if req.account_id is None or req.account_id == "":
-    #     return JSONResponse(
-    #         content={"message": "account_id is empty or null"},
-    #         status_code=400,
-    #         media_type="application/json",
-    #     )
 
     if signApi is None:
         return JSONResponse(
@@ -111,7 +120,48 @@ async def signFetchTemplates(req: SignTemplateRequest) -> JSONResponse:
             media_type="application/json",
         )
 
-    return signApi.fetchTemplates(req)
+    return signApi.FetchTemplates(req)
+
+
+@app.post("/helloSign/createFromTemplate")
+async def signCreateFromTemplate(req: SignTemplateRequest) -> JSONResponse:
+    print(req)
+    if req.token is None or req.token == "":
+        return JSONResponse(
+            content={"message": "authToken is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if req.template_id is None or req.template_id == "":
+        return JSONResponse(
+            content={"message": "template_id is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if req.user_id is None or req.user_id == "":
+        return JSONResponse(
+            content={"message": "user_id is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if req.template_name is None or req.template_name == "":
+        return JSONResponse(
+            content={"message": "template_name is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if signApi is None:
+        return JSONResponse(
+            content={"message": "signApi is not initialised"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    return signApi.CreateFromTemplate(req)
 
 
 # Huggingface API endpoints
@@ -123,9 +173,10 @@ async def huggingfaceGenerateDoc(req: HFGenerateRequest) -> JSONResponse:
             status_code=400,
             media_type="application/json",
         )
-    return hfApi.generateDoc(req)
+    return hfApi.GenerateDoc(req)
 
 
+# user/database api requests
 @app.post("/api/userPdfList")
 async def supabaseUserPdflist(req: DBPdfListReq) -> JSONResponse:
     if req.user_id is None or req.user_id == "":
@@ -135,3 +186,42 @@ async def supabaseUserPdflist(req: DBPdfListReq) -> JSONResponse:
             media_type="application/json",
         )
     return supabaseApi.FetchPdflist(req)
+
+
+@app.post("/api/fetchPdf")
+async def supabaseFetchPdf(req: DBPdfReq) -> JSONResponse:
+    if req.user_id is None or req.user_id == "":
+        return JSONResponse(
+            content={"message": "authToken is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+    if req.pdf_id is None or req.pdf_id == "":
+        return JSONResponse(
+            content={"message": "pdf_id is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+    return supabaseApi.FetchPdfById(req)
+
+
+@app.post("/api/createEmptyPdf")
+async def supabaseEmptyPdf(req: DBEmptyPdfReq) -> JSONResponse:
+    if req.user_id is None or req.user_id == "":
+        return JSONResponse(
+            content={"message": "authToken is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+    if req.pdf_name is None or req.pdf_name == "":
+        return JSONResponse(
+            content={"message": "pdf_name is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+    return supabaseApi.CreateEmptyPdf(req)
+
+
+@app.post("/api/createUploadPdf")
+async def supabaseUploadPdf() -> JSONResponse:
+    pass

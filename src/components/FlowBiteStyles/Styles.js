@@ -1,7 +1,7 @@
 const cardTheme = {
   root: {
-    base: "flex rounded-lg w-[208px] h-[300px] border border-gray-200 bg-white shadow-none dark:border-gray-700 dark:bg-gray-800 hover:border-[#4d4dc7] hover:cursor-pointer overflow-x-hidden overflow-y-hidden",
-    children: "flex h-full flex-col justify-center gap-4 p-6",
+    base: "flex rounded-lg w-[208px] h-[280px] border border-gray-200 bg-white shadow-none dark:border-gray-700 dark:bg-gray-800 hover:border-[#4d4dc7] hover:cursor-pointer overflow-x-hidden overflow-y-hidden",
+    children: "flex h-full flex-col justify-between items-stretch p-6",
     horizontal: {
       off: "flex-col",
       on: "flex-col md:max-w-xl md:flex-row",
