@@ -68,7 +68,7 @@ const HomePage = () => {
         <img alt="logo" src="/landify/logo-6.svg" className="home-image07" />
         <div className="home-divider1"></div>
       </div>
-      <div className="home-features">
+      <div className="home-features" id="features">
         <h2 className="Headline2 home-text19">Tailor-made features</h2>
         <span className="home-text20">
           Unleash your PDFs&apos; full potential with personalized editing and
@@ -77,6 +77,7 @@ const HomePage = () => {
         <div className="home-features1">
           <FeatureCard
             text="Streamline your document processes seamlessly."
+            image_src="/landify/01.svg"
             card_title="Robust workflow"
           ></FeatureCard>
           <FeatureCard
@@ -106,11 +107,11 @@ const HomePage = () => {
           ></FeatureCard>
         </div>
       </div>
-      <div className="home-testimonials">
+      <div className="home-testimonials" id="testimonials">
         <div className="home-container08">
           <div className="home-container09">
             <img
-              alt="quote"
+              alt="/landify/quote-mark.svg"
               src="/landify/quote-mark.svg"
               className="home-image08"
             />
@@ -146,10 +147,13 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      <div className="home-achievements">
+      <div className="home-achievements" id="achievements">
         <div className="home-container14">
           <h2 className="home-text23">
-            <span className="home-text24">
+            <span
+              className="home-text24"
+              style={{ fontSize: "28px", fontWeight: 700 }}
+            >
               Our 18 years of
               <span
                 dangerouslySetInnerHTML={{
@@ -158,9 +162,11 @@ const HomePage = () => {
               />
             </span>
             <br></br>
-            <span>achievements</span>
+            <span style={{ fontSize: "28px", fontWeight: 700 }}>
+              achievements
+            </span>
           </h2>
-          <span className="home-text27">
+          <span className="home-text27" style={{ fontSize: "18px" }}>
             With our super powers we have reached this
           </span>
         </div>
@@ -178,7 +184,11 @@ const HomePage = () => {
             ></StatsCard>
           </div>
           <div className="home-container17">
-            <StatsCard number="500+" description="Clients"></StatsCard>
+            <StatsCard
+              number="500+"
+              image_src="/landify/05.svg"
+              description="Clients"
+            ></StatsCard>
             <StatsCard
               number="140"
               image_src="/landify/07.svg"
@@ -204,7 +214,7 @@ const HomePage = () => {
             Whether it&apos;s contracts, legal documents, or any text-based
             content, our platform makes analysis a breeze.
           </span>
-          <LinkIconButton text="Get Started"></LinkIconButton>
+          <PrimaryButton button="Get Started"></PrimaryButton>
         </div>
       </div>
       <div className="home-feature2">
@@ -255,7 +265,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-      <div className="home-footer">
+      <div className="home-footer" id="contact">
         <footer className="home-container24">
           <img
             alt="logo"

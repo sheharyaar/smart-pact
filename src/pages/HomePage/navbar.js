@@ -1,6 +1,20 @@
 import StoreBanner from "./store-banner";
+import React, { useState } from "react";
 
 const Navbar = () => {
+  const [scrollToSection, setScrollToSection] = useState(null);
+
+  const handleScrollTo = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offset = element.offsetTop;
+      window.scrollTo({
+        top: offset,
+        behavior: "smooth", // Add smooth scrolling behavior
+      });
+      setScrollToSection(null); // Reset the scroll target
+    }
+  };
   return (
     <div data-role="Header" className="home-header-container">
       <header className="home-header">
@@ -11,13 +25,36 @@ const Navbar = () => {
             className="home-image"
           />
         </div>
-        <div className="home-menu">
-          <span className="home-text00">Overview</span>
-          <span className="home-text01">Features</span>
-          <span className="home-text03">Testimonials</span>
-          <span className="home-text04">Acheivements</span>
-          <span className="home-text05">Contact Us</span>
-        </div>
+        <span
+          className="home-text00 clickable"
+          onClick={() => handleScrollTo("overview")}
+        >
+          Overview
+        </span>
+        <span
+          className="home-text01 clickable"
+          onClick={() => handleScrollTo("features")}
+        >
+          Features
+        </span>
+        <span
+          className="home-text03 clickable"
+          onClick={() => handleScrollTo("testimonials")}
+        >
+          Testimonials
+        </span>
+        <span
+          className="home-text04 clickable"
+          onClick={() => handleScrollTo("achievements")}
+        >
+          Achievements
+        </span>
+        <span
+          className="home-text05 clickable"
+          onClick={() => handleScrollTo("contact")}
+        >
+          Contact Us
+        </span>
         <div className="home-container01"></div>
         <div data-role="BurgerMenu" className="home-burger-menu">
           <svg viewBox="0 0 1024 1024" className="home-menu1">
@@ -43,11 +80,36 @@ const Navbar = () => {
           </div>
         </div>
         <div className="home-mid">
-          <span className="home-text06">Overview</span>
-          <span className="home-text07">Features</span>
-          <span className="home-text08">Testimonials</span>
-          <span className="home-text09">Acheivements</span>
-          <span className="home-text10">Contact Us</span>
+          <span
+            className="home-text00 clickable"
+            onClick={() => handleScrollTo("overview")}
+          >
+            Overview
+          </span>
+          <span
+            className="home-text01 clickable"
+            onClick={() => handleScrollTo("features")}
+          >
+            Features
+          </span>
+          <span
+            className="home-text03 clickable"
+            onClick={() => handleScrollTo("testimonials")}
+          >
+            Testimonials
+          </span>
+          <span
+            className="home-text04 clickable"
+            onClick={() => handleScrollTo("achievements")}
+          >
+            Achievements
+          </span>
+          <span
+            className="home-text05 clickable"
+            onClick={() => handleScrollTo("contact")}
+          >
+            Contact Us
+          </span>
         </div>
         <div className="home-bot">
           <div className="home-container02">
