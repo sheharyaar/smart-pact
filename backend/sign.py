@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from helpers import DownloadFileFromURL
 from s3 import AwsUploadService
 from db import SupabaseAPI, DBPdfCreateReq
+import os
 
 sign_api_key = "f59d2ae8271998faa458210c174a85f96085e03f0d1582cc03da2415199b0312"
 sign_client_id = "973b3a1562379a15e47fb44b611b8388"
@@ -160,7 +161,10 @@ class HelloSign:
                     pdf_path=path,
                     pdf_name=req.template_name,
                 )
-                return self.db_service.CreatePdf(new_req)
+                resp = self.db_service.CreatePdf(new_req)
+                # remove the created file
+                os.remove(path)
+                return resp
 
             except ApiException as e:
                 print("Exception when calling Dropbox Sign API: %s\n" % e)

@@ -107,7 +107,35 @@ const CreateEmptyDoc = (props) => {
 };
 
 const CreateUploadDoc = (props) => {
-  return new Promise(async (resolve, reject) => {});
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, error } = await props.supabase.auth.getSession();
+      if (error) throw error;
+
+      props.formData.append("user_id", data.session.user.id);
+
+      const options = {
+        method: "POST",
+        body: props.formData,
+      };
+
+      const resp = await fetch(
+        "http://localhost:8000/api/createUploadPdf",
+        options
+      );
+
+      if (resp.status >= 200 && resp.status < 300) {
+        const data = await resp.json();
+        console.log("CreateUploadPDf : ", data);
+        resolve(data);
+      } else {
+        reject(new Error(`HTTP Error ${resp.status}`));
+      }
+    } catch (e) {
+      console.error(e);
+      reject(e);
+    }
+  });
 };
 
 export { FetchPdfList, CreateEmptyDoc, CreateUploadDoc, FetchPdfById };

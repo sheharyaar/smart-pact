@@ -1,6 +1,7 @@
 import os
-from fastapi import FastAPI
-from pprint import pprint
+from typing import Annotated
+
+from fastapi import FastAPI,  Form, UploadFile
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -223,5 +224,30 @@ async def supabaseEmptyPdf(req: DBEmptyPdfReq) -> JSONResponse:
 
 
 @app.post("/api/createUploadPdf")
-async def supabaseUploadPdf() -> JSONResponse:
-    pass
+async def supabaseUploadPdf(
+    file: Annotated[UploadFile, Form()],
+    file_name: Annotated[str, Form()],
+    user_id: Annotated[str, Form()],
+) -> JSONResponse:
+    if user_id is None or user_id == "":
+        return JSONResponse(
+            content={"message": "authToken is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if file_name is None or file_name == "":
+        return JSONResponse(
+            content={"message": "file_name is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if file is None:
+        return JSONResponse(
+            content={"message": "file is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    return supabaseApi.CreateUploadPdf(file, file_name, user_id)
