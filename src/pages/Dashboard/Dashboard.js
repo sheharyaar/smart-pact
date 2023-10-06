@@ -17,9 +17,7 @@ const DashBoard = () => {
   const [addPdfModal, setAddPdfModal] = useState(false);
   const [filteredList, setFilteredList] = useState(null);
   const { supabase } = useContext(AuthContext);
-  // fetch user data if auth token is valid
-  // and update the cards and tabs
-  // TODO: SHEHAR: save to session storage too for caching
+
   useEffect(() => {
     FetchPdfList({
       supabase: supabase,

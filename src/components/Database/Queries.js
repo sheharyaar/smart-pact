@@ -58,6 +58,17 @@ const FetchPdfById = (props) => {
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();
         console.log("FetchPdfById : ", data);
+        let pdfDiff = JSON.parse(data.diff_json);
+        if (pdfDiff === null || pdfDiff === undefined) {
+          console.error("FetchPdfById : error parsing diff json");
+          pdfDiff = null;
+        }
+
+        resolve({
+          pdf_url: data.pdf_url,
+          diff_obj: pdfDiff,
+          pdf_name: data.pdf_name,
+        });
         resolve(data);
       } else {
         throw new Error(`HTTP Error ${resp.status}`);

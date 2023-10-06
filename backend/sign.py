@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from dropbox_sign import ApiClient, ApiException, Configuration, apis, models
 from fastapi.responses import JSONResponse
 from helpers import DownloadFileFromURL
-from s3 import AwsUploadService
+from s3 import AwsService
 from db import SupabaseAPI, DBPdfCreateReq
 import os
 
@@ -29,7 +29,7 @@ class SignTemplateRequest(BaseModel):
 
 
 class HelloSign:
-    def __init__(self, aws_service: AwsUploadService, db_service: SupabaseAPI) -> None:
+    def __init__(self, aws_service: AwsService, db_service: SupabaseAPI) -> None:
         self.client_id = sign_client_id
         self.client_secret = sign_client_secret
         self.aws_service = aws_service
@@ -161,7 +161,7 @@ class HelloSign:
                     pdf_path=path,
                     pdf_name=req.template_name,
                 )
-                resp = self.db_service.CreatePdf(new_req)
+                resp = self.db_service.DBCreatePdf(new_req)
                 # remove the created file
                 os.remove(path)
                 return resp

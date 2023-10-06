@@ -18,12 +18,12 @@ const EditorContext = createContext({
   docDiffJSON: null,
   setDocDiffJSON: () => {},
   instance: null,
+  document: null,
 });
 
 const EditorPage = () => {
   const [showHelloSignModal, setHelloSignModal] = useState(false);
   const [showGeneratePdfModal, setGeneratePdfModal] = useState(false);
-  const [docDiffJSON, setDocDiffJSON] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const instance = useRef(null);
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const EditorPage = () => {
 
         setEditorUrls({
           pdf_url: data.pdf_url,
-          diff_url: data.diff_json,
+          diff_obj: data.diff_obj,
           pdf_name: data.pdf_name,
         });
         setIsEditable(true);
@@ -71,9 +71,8 @@ const EditorPage = () => {
             setGeneratePdfModal,
             editorUrls,
             setEditorUrls,
-            docDiffJSON,
-            setDocDiffJSON,
             instance,
+            document,
           }}
         >
           <AuthNav />

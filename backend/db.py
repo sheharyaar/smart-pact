@@ -4,10 +4,17 @@ supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 from supabase import create_client, Client
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
-from s3 import AwsUploadService
+from s3 import AwsService
 from typing import Annotated
 import os
+import io
 from fastapi import Form, UploadFile
+
+
+class DBSavePdfReq(BaseModel):
+    user_id: str
+    pdf_id: str
+    json_diff: str
 
 
 class DBPdfListReq(BaseModel):
@@ -35,7 +42,7 @@ class SupabaseAPI:
     key: str
     client: Client
 
-    def __init__(self, aws_service: AwsUploadService):
+    def __init__(self, aws_service: AwsService):
         self.aws_service = aws_service
         self.url = supabase_url
         self.key = supabase_key
@@ -125,6 +132,7 @@ class SupabaseAPI:
             pathprefix = self.aws_service.pdf_prefix + req.pdf_id + "/"
             pdf_path = pathprefix + req.pdf_id + ".pdf"
             json_path = pathprefix + req.pdf_id + ".json"
+
             pdf_file = self.aws_service.FetchFileURL(object_name=pdf_path)
             print("pdf_file : ", pdf_file["downloadUrl"])
             if pdf_file is None:
@@ -134,9 +142,14 @@ class SupabaseAPI:
                     media_type="application/json",
                 )
 
-            json_file = self.aws_service.FetchFileURL(object_name=json_path)
-            print("json_file : ", json_file["downloadUrl"])
-            if json_file is None:
+            f = io.BytesIO()
+            print("json_path : ", json_path)
+            try:
+                self.aws_service.s3.download_fileobj(
+                    self.aws_service.bucket_name, json_path, f
+                )
+            except:
+                # send without json if not found
                 return JSONResponse(
                     content={
                         "pdf_url": pdf_file["downloadUrl"],
@@ -147,10 +160,13 @@ class SupabaseAPI:
                     media_type="application/json",
                 )
 
+            f.seek(0)
+            json_text = f.read().decode("utf-8")
+            print("JSON Text", json_text)
             return JSONResponse(
                 content={
                     "pdf_url": pdf_file["downloadUrl"],
-                    "diff_json": json_file["downloadUrl"],
+                    "diff_json": json_text,
                     "pdf_name": data[1][0]["pdf"]["pdf_name"],
                 },
                 status_code=200,
@@ -158,14 +174,14 @@ class SupabaseAPI:
             )
 
         except Exception as e:
-            print("Execption in fetching PDF List : ", e)
+            print("Execption in fetching PDF : ", e)
             return JSONResponse(
                 content={"message": "error"},
                 status_code=400,
                 media_type="application/json",
             )
 
-    def CreatePdf(self, req: DBPdfCreateReq) -> JSONResponse:
+    def DBCreatePdf(self, req: DBPdfCreateReq) -> JSONResponse:
         try:
             # create a db entry in pdf
             # returns the pdf_id creader
@@ -221,7 +237,7 @@ class SupabaseAPI:
                 pdf_path=pdf_path,
             )
 
-            return self.CreatePdf(new_req)
+            return self.DBCreatePdf(new_req)
         except Exception as e:
             print("Execption in creating empty pdf : ", e)
             return JSONResponse(
@@ -249,10 +265,109 @@ class SupabaseAPI:
                 pdf_name=file_name,
                 pdf_path=path,
             )
-            resp = self.CreatePdf(new_req)
+            resp = self.DBCreatePdf(new_req)
             # remove the created file
             os.remove(path)
             return resp
+        except:
+            return JSONResponse(
+                content={"message": "error in uploading file"},
+                status_code=400,
+                media_type="application/json",
+            )
+
+    def SavePdf(self, req: DBSavePdfReq) -> JSONResponse:
+        # Check if we have save permission (editor)
+        try:
+            data, error = (
+                self.client.table("global_pdf")
+                .select("pdf_id, pdf(pdf_name)")
+                .eq("user_id", req.user_id)
+                .eq("pdf_id", req.pdf_id)
+                .eq("role", "editor")
+                .execute()
+            )
+            if data[1] is None:
+                return JSONResponse(
+                    content={"message": "pdf is not found"},
+                    status_code=400,
+                    media_type="application/json",
+                )
+
+            if error[1] is not None:
+                print("Error in fetching pdf : ", error)
+                return JSONResponse(
+                    content={"message": "error"},
+                    status_code=400,
+                    media_type="application/json",
+                )
+
+            path = self.aws_service.pdf_prefix + req.pdf_id + "/"
+            json_path = path + req.pdf_id + ".json"
+            f = io.BytesIO(req.json_diff.encode("utf-8"))
+
+            if self.aws_service.UploadObject(f, json_path, "application/json", False):
+                # fetch the pdf, json from s3 and send the url
+                return JSONResponse(
+                    content={"message": "success"},
+                    status_code=200,
+                    media_type="application/json",
+                )
+            else:
+                return JSONResponse(
+                    content={"message": "error in saving file"},
+                    status_code=400,
+                    media_type="application/json",
+                )
+
+        except:
+            return JSONResponse(
+                content={"message": "error in saving file"},
+                status_code=400,
+                media_type="application/json",
+            )
+        # Save to s3
+        pass
+
+    def PublishPdf(
+        self,
+        file: Annotated[UploadFile, Form()],
+        pdf_id: Annotated[str, Form()],
+        user_id: Annotated[str, Form()],
+    ) -> JSONResponse:
+        # save the file and call create pdf
+        path = "./temp/" + user_id + "_" + pdf_id + ".pdf"
+        # check if the file name has pdf extension
+
+        try:
+            open(path, "wb").write(file.file.read())
+            if self.aws_service.UploadFile(
+                path,
+                self.aws_service.pdf_prefix + pdf_id + "/" + pdf_id + ".pdf",
+                "application/pdf",
+                False,
+            ):
+                # remove the created file
+                os.remove(path)
+                # remove json
+                self.aws_service.s3.delete_object(
+                    Bucket=self.aws_service.bucket_name,
+                    Key=self.aws_service.pdf_prefix + pdf_id + "/" + pdf_id + ".json",
+                )
+
+                return JSONResponse(
+                    content={"pdf_id": pdf_id},
+                    status_code=200,
+                    media_type="application/json",
+                )
+            else:
+                # TODO: remove pdf entry from db
+
+                return JSONResponse(
+                    content={"message": "error in uploading file"},
+                    status_code=400,
+                    media_type="application/json",
+                )
         except:
             return JSONResponse(
                 content={"message": "error in uploading file"},

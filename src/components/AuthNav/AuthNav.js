@@ -1,12 +1,21 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import {
+  useCallback,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { AuthContext } from "../../App";
 import { Navbar, Dropdown, Avatar } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { HiLogout } from "react-icons/hi";
 
+const AuthNavContext = createContext({});
+
 const AuthNav = () => {
   const { supabase } = useContext(AuthContext);
   const [userObj, setUserObj] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,44 +48,50 @@ const AuthNav = () => {
   }, [navigate, supabase]);
 
   return (
-    <div className="h-[8vh]">
-      <Navbar fluid rounded>
-        <Navbar.Brand href="http://localhost:3000/dashboard">
-          <img
-            alt="Smart pact"
-            className="mr-3 h-6 sm:h-9"
-            src={`${process.env.PUBLIC_URL}/logo.svg`}
-          />
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-            Smart Pact
-          </span>
-        </Navbar.Brand>
-        <div className="flex md:order-2">
-          <Dropdown
-            arrowIcon={false}
-            inline
-            label={
-              <Avatar alt="User settings" img={userObj?.profile_img} rounded />
-            }
-          >
-            <Dropdown.Header>
-              <span className="block font-bold text-lg">
-                {userObj?.first_name} {userObj?.last_name}
-              </span>
-              <span className="block truncate text-sm font-medium">
-                {userObj?.email}
-              </span>
-            </Dropdown.Header>
-            <Dropdown.Item onClick={handleLogout}>
-              <HiLogout className="text-purple-800" />
-              <span className="text-purple-800">Sign out</span>
-            </Dropdown.Item>
-          </Dropdown>
-          <Navbar.Toggle />
-        </div>
-      </Navbar>
-    </div>
+    <AuthNavContext.Provider value={{ isSaving, setIsSaving }}>
+      <div className="h-[8vh]">
+        <Navbar fluid rounded>
+          <Navbar.Brand href="http://localhost:3000/dashboard">
+            <img
+              alt="Smart pact"
+              className="mr-3 h-6 sm:h-9"
+              src={`${process.env.PUBLIC_URL}/logo.svg`}
+            />
+            <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+              Smart Pact
+            </span>
+          </Navbar.Brand>
+          <div className="flex md:order-2">
+            <Dropdown
+              arrowIcon={false}
+              inline
+              label={
+                <Avatar
+                  alt="User settings"
+                  img={userObj?.profile_img}
+                  rounded
+                />
+              }
+            >
+              <Dropdown.Header>
+                <span className="block font-bold text-lg">
+                  {userObj?.first_name} {userObj?.last_name}
+                </span>
+                <span className="block truncate text-sm font-medium">
+                  {userObj?.email}
+                </span>
+              </Dropdown.Header>
+              <Dropdown.Item onClick={handleLogout}>
+                <HiLogout className="text-purple-800" />
+                <span className="text-purple-800">Sign out</span>
+              </Dropdown.Item>
+            </Dropdown>
+            <Navbar.Toggle />
+          </div>
+        </Navbar>
+      </div>
+    </AuthNavContext.Provider>
   );
 };
 
-export { AuthNav };
+export { AuthNav, AuthNavContext };

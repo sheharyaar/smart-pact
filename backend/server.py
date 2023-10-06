@@ -1,7 +1,7 @@
 import os
 from typing import Annotated
 
-from fastapi import FastAPI,  Form, UploadFile
+from fastapi import FastAPI, Form, UploadFile
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -12,8 +12,8 @@ from sign import (
     HelloSign,
 )
 from hf import HFGenerateRequest, HuggingFace
-from db import SupabaseAPI, DBPdfListReq, DBPdfReq, DBEmptyPdfReq
-from s3 import AwsUploadService
+from db import SupabaseAPI, DBPdfListReq, DBPdfReq, DBEmptyPdfReq, DBSavePdfReq
+from s3 import AwsService
 
 signApi = None
 hfApi = None
@@ -32,7 +32,7 @@ async def lifespan(app: FastAPI):
         os.makedirs("./temp")
 
     global awsService
-    awsService = AwsUploadService()
+    awsService = AwsService()
 
     global supabaseApi
     supabaseApi = SupabaseAPI(aws_service=awsService)
@@ -251,3 +251,59 @@ async def supabaseUploadPdf(
         )
 
     return supabaseApi.CreateUploadPdf(file, file_name, user_id)
+
+
+@app.post("/api/savePdf")
+async def savePdf(req: DBSavePdfReq) -> JSONResponse:
+    if req.pdf_id is None or req.pdf_id == "":
+        return JSONResponse(
+            content={"message": "pdf_id is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if req.user_id is None or req.user_id == "":
+        return JSONResponse(
+            content={"message": "pdf_name is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if req.json_diff is None or req.json_diff == "":
+        return JSONResponse(
+            content={"message": "pdf_path is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    return supabaseApi.SavePdf(req)
+
+
+@app.post("/api/publishPdf")
+async def publishPdf(
+    file: Annotated[UploadFile, Form()],
+    pdf_id: Annotated[str, Form()],
+    user_id: Annotated[str, Form()],
+) -> JSONResponse:
+    if user_id is None or user_id == "":
+        return JSONResponse(
+            content={"message": "authToken is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if pdf_id is None or pdf_id == "":
+        return JSONResponse(
+            content={"message": "pdf_id is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if file is None:
+        return JSONResponse(
+            content={"message": "file is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    return supabaseApi.PublishPdf(file, pdf_id, user_id)
