@@ -69,14 +69,6 @@ const LoginPage = (props) => {
   const handleSignup = useCallback(
     (e) => {
       e.preventDefault();
-      const emailValue = e.target[3].value;
-      const last = e.target[2].value;
-      const first = e.target[1].value;
-      const pass = e.target[4].value;
-      console.log("Email Value:", emailValue);
-      console.log("last", last);
-      console.log("first", first);
-      console.log("pass", pass);
 
       supabase.auth
         .signUp({
