@@ -5,7 +5,9 @@ from supabase import create_client, Client
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from s3 import AwsUploadService
-import time
+from typing import Annotated
+import os
+from fastapi import Form, UploadFile
 
 
 class DBPdfListReq(BaseModel):
@@ -228,5 +230,32 @@ class SupabaseAPI:
                 media_type="application/json",
             )
 
-    def CreateUploadedPdf(self) -> JSONResponse:
-        pass
+    def CreateUploadPdf(
+        self,
+        file: Annotated[UploadFile, Form()],
+        file_name: Annotated[str, Form()],
+        user_id: Annotated[str, Form()],
+    ) -> JSONResponse:
+        # save the file and call create pdf
+        path = "./temp/" + user_id + "_" + file_name
+        # check if the file name has pdf extension
+        if not file_name.endswith(".pdf"):
+            path = path + ".pdf"
+
+        try:
+            open(path, "wb").write(file.file.read())
+            new_req = DBPdfCreateReq(
+                user_id=user_id,
+                pdf_name=file_name,
+                pdf_path=path,
+            )
+            resp = self.CreatePdf(new_req)
+            # remove the created file
+            os.remove(path)
+            return resp
+        except:
+            return JSONResponse(
+                content={"message": "error in uploading file"},
+                status_code=400,
+                media_type="application/json",
+            )

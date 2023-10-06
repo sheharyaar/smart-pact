@@ -15,6 +15,7 @@ import { HelloSignAuth } from "../../components/HelloSign/HelloSignAuth";
 import { CreateEmptyDoc } from "../../components/Database/Queries";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../App";
+import { CreateUploadDoc } from "../../components/Database/Queries";
 
 const AddPdfModal = () => {
   const { addPdfModal, setAddPdfModal } = useContext(DashboardContext);
@@ -23,16 +24,36 @@ const AddPdfModal = () => {
   const textRef = useRef(null);
   const navigate = useNavigate();
   const { supabase } = useContext(AuthContext);
-  const [signTemplateLoading, setSignTemplateLoading] = useState(false);
+  const [signTemplateLoading] = useState(false);
 
-  const handleFormSubmit = useCallback((e) => {
-    e.preventDefault();
-    const currFile = fileRef?.current;
-    if (!currFile) return;
+  const handleFormSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      const currFile = fileRef?.current;
+      if (!currFile) return;
 
-    // TODO: SHEHAR: Use file read and upload logic
-    console.log(currFile);
-  }, []);
+      console.log("Currfile Size : ", currFile.size);
+      // file size limit 5mb
+      if (currFile.size > 5000000) {
+        alert("File size is too big");
+        return;
+      }
+
+      let formData = new FormData(); //formdata object
+      formData.append("file", currFile); //append the values with key, value pair
+      formData.append("file_name", currFile.name);
+
+      CreateUploadDoc({ supabase, formData })
+        .then((data) => {
+          console.log("CreateUploadDoc : ", data);
+          navigate(`/editor/${data.pdf_id}`);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    [supabase, navigate]
+  );
 
   const handleFileUpload = useCallback((e) => {
     const file = e.target.files[0];
@@ -65,7 +86,7 @@ const AddPdfModal = () => {
           console.log(error);
         });
     },
-    [supabase]
+    [supabase, navigate]
   );
 
   return (
