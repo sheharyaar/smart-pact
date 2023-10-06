@@ -1,5 +1,7 @@
-import { useContext, useEffect, useRef } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 import { EditorContext } from "../../pages/EditorPage/EditorPage";
+import { PdfPublish, PdfSave } from "./PdfEditorUtils";
+import { AuthContext } from "../../App";
 
 const UnneededPlugins = ["signature", "note"];
 
@@ -8,13 +10,53 @@ const aiSvg = `<svg role="graphics-symbol" viewBox="0 0 14 17" class="sparkles" 
 
 const PdfEditor = () => {
   const containerRef = useRef(null);
-  const { instance } = useContext(EditorContext);
-
-  const { editorUrls, setHelloSignModal, setGeneratePdfModal, docDiffJSON } =
+  const { supabase } = useContext(AuthContext);
+  const { instance, document } = useContext(EditorContext);
+  const { editorUrls, setHelloSignModal, setGeneratePdfModal } =
     useContext(EditorContext);
 
-  // const aiNode = document.createElement("div");
-  // aiNode.innerHTML = `AI Powered<img src=${aiSvg} />`;
+  try {
+    const pdfDiff = JSON.parse(editorUrls.diff_json);
+    if (pdfDiff === null || pdfDiff === undefined)
+      throw new Error("PdfEditor : json is null or undefined");
+  } catch (e) {
+    console.error("PdfEditor : error in parsing diff json", e);
+  }
+
+  const handlePdfPublish = useCallback(() => {
+    // pdf file export
+    PdfPublish({
+      instance: instance,
+      supabase: supabase,
+      pdf_id: document,
+    })
+      .then((data) => {
+        console.log("PdfPublish : ", data);
+      })
+      .catch((e) => {
+        console.error("PdfPublish : error publishing pdf", e);
+      });
+  }, [instance, supabase, document]);
+
+  const handlePdfSave = useCallback(() => {
+    PdfSave({ instance: instance, supabase: supabase, pdf_id: document })
+      .then((data) => {
+        console.log("PdfSave : ", data);
+      })
+      .catch((e) => {
+        console.error("PdfSave : error saving pdf", e);
+      });
+  }, [instance, supabase, document]);
+
+  const keyDownHandler = useCallback(
+    (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.keyCode === 83) {
+        e.preventDefault();
+        handlePdfSave();
+      }
+    },
+    [handlePdfSave]
+  );
 
   useEffect(() => {
     const container = containerRef.current;
@@ -57,6 +99,24 @@ const PdfEditor = () => {
         },
       });
 
+      toolbarItems.push({
+        type: "custom",
+        id: "save-file",
+        title: "Save",
+        onPress: () => {
+          handlePdfSave();
+        },
+      });
+
+      toolbarItems.push({
+        type: "custom",
+        id: "publish-file",
+        title: "Publish",
+        onPress: () => {
+          handlePdfPublish();
+        },
+      });
+
       // A custom item. Inside the onPress callback we can call into PSPDFKit APIs.
       // toolbarItems.push({
       //   type: "custom",
@@ -81,10 +141,14 @@ const PdfEditor = () => {
 
         // Use the public directory URL as a base URL. PSPDFKit will download its library assets from here.
         baseUrl: `${window.location.protocol}//${window.location.host}/${process.env.PUBLIC_URL}`,
-        instantJSON: docDiffJSON,
-        autoSaveMode: PSPDFKit.AutoSaveMode.INTELLIGENT,
+        instantJSON: editorUrls.diff_obj,
         document: editorUrls.pdf_url,
       });
+
+      instance.current.contentDocument.addEventListener(
+        "keydown",
+        keyDownHandler
+      );
     })();
 
     return () => PSPDFKit && PSPDFKit.unload(container);
@@ -92,8 +156,10 @@ const PdfEditor = () => {
     setHelloSignModal,
     setGeneratePdfModal,
     instance,
-    docDiffJSON,
     editorUrls,
+    keyDownHandler,
+    handlePdfSave,
+    handlePdfPublish,
   ]);
 
   return <div ref={containerRef} style={{ width: "100%", height: "92vh" }} />;

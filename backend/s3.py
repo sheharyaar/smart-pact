@@ -9,7 +9,7 @@ region_name = "ap-south-1"
 bucket_name = "smart-pact"
 
 
-class AwsUploadService:
+class AwsService:
     def __init__(self):
         self.bucket_name = bucket_name
         self.profile_img_prefix = "profile_img/"
@@ -38,6 +38,28 @@ class AwsUploadService:
                 self.bucket_name,
                 path_s3,
                 ExtraArgs=extra_args,
+            )
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    """
+    Upload object to S3
+    """
+
+    def UploadObject(self, object, path_s3, content_type, public=False) -> bool:
+        if public:
+            acl = "public-read"
+        else:
+            acl = "private"
+
+        try:
+            self.s3.put_object(
+                Body=object,
+                Bucket=self.bucket_name,
+                Key=path_s3,
+                ACL=acl,
             )
             return True
         except Exception as e:

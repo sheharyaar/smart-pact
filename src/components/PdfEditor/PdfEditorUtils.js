@@ -141,12 +141,91 @@ const PdfGenerateText = (props) => {
     });
 };
 
-// TODO: SHEHAR: Complete this
-const PdfSave = (props) => {};
+const PdfSave = (props) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const instance = props.instance.current;
+      if (instance === null || instance === undefined) {
+        console.error("PdfSave : instance is undefined or null");
+        return;
+      }
+      console.log("Saving...");
 
-// TODO: SHEHAR: Complete this
+      const diff_json = await instance.exportInstantJSON();
+      if (diff_json === null || diff_json === undefined) {
+        reject("Could not fetch PDF state");
+      }
+
+      const { data, error } = await props.supabase.auth.getSession();
+      if (error) throw error;
+
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: data.session.user.id,
+          pdf_id: props.pdf_id,
+          json_diff: JSON.stringify(diff_json),
+        }),
+      };
+
+      const resp = await fetch("http://localhost:8000/api/savePdf", options);
+      if (resp.status >= 200 && resp.status < 300) {
+        resolve("Saved");
+      } else {
+        reject("Error in PDF");
+      }
+    } catch (e) {
+      console.error("PdfSave : error saving pdf", e);
+      reject(e);
+    }
+  });
+};
+
 // Save to local/session storage, the json only. the pdf will be fetched from the server
-const PdfPublish = (props) => {};
+const PdfPublish = (props) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, error } = await props.supabase.auth.getSession();
+      if (error) throw error;
+
+      const pdfArrayBuffer = await props.instance.current.exportPDF({
+        flatten: true,
+      });
+      if (pdfArrayBuffer === null || pdfArrayBuffer === undefined) {
+        throw Error("PdfPublish : pdfArrayBuffer is null or undefined");
+      }
+      let formData = new FormData(); //formdata object=
+
+      formData.append(
+        "file",
+        new Blob([pdfArrayBuffer], { type: "application/pdf" })
+      );
+      formData.append("pdf_id", props.pdf_id);
+      formData.append("user_id", data.session.user.id);
+
+      const options = {
+        method: "POST",
+        body: formData,
+      };
+
+      console.log("PdfPublish body: ", options.body);
+      const resp = await fetch("http://localhost:8000/api/publishPdf", options);
+      if (resp.status >= 200 && resp.status < 300) {
+        const data = await resp.json();
+        console.log("PdfPublish : ", data);
+        resolve("success");
+      } else {
+        reject(new Error(`HTTP Error ${resp.status}`));
+      }
+    } catch (e) {
+      console.error(e);
+      reject(e);
+    }
+  });
+};
 
 // TODO: SHEHAR: Complete this
 // Fetch the json from session storage / server and the history of pdfs
