@@ -12,7 +12,7 @@ const PdfEditor = () => {
   const containerRef = useRef(null);
   const { supabase } = useContext(AuthContext);
   const { instance, document } = useContext(EditorContext);
-  const { editorUrls, setHelloSignModal, setGeneratePdfModal } =
+  const { editorUrls, setHelloSignModal, setAnalysePdfModal } =
     useContext(EditorContext);
 
   try {
@@ -58,6 +58,10 @@ const PdfEditor = () => {
     [handlePdfSave]
   );
 
+  const handlePdfAnalyse = useCallback(() => {
+    setAnalysePdfModal(true);
+  }, [setAnalysePdfModal]);
+
   useEffect(() => {
     const container = containerRef.current;
     let PSPDFKit;
@@ -88,17 +92,6 @@ const PdfEditor = () => {
         },
       });
 
-      // A custom item. Inside the onPress callback we can call into PSPDFKit APIs.
-      toolbarItems.push({
-        type: "custom",
-        id: "toolbar-generate-pdf",
-        icon: aiSvg,
-        title: "Generate PDF",
-        onPress: () => {
-          setGeneratePdfModal(true);
-        },
-      });
-
       toolbarItems.push({
         type: "custom",
         id: "save-file",
@@ -118,14 +111,15 @@ const PdfEditor = () => {
       });
 
       // A custom item. Inside the onPress callback we can call into PSPDFKit APIs.
-      // toolbarItems.push({
-      //   type: "custom",
-      //   id: "toolbar-analyse-pdf",
-      //   title: "Analyse content",
-      //   onPress: () => {
-      //     PdfAnalyseText({ instance });
-      //   },
-      // });
+      toolbarItems.push({
+        type: "custom",
+        id: "toolbar-analyse-pdf",
+        title: "Analyse Document",
+        icon: aiSvg,
+        onPress: () => {
+          handlePdfAnalyse();
+        },
+      });
 
       instance.current = await PSPDFKit.load({
         // Container where PSPDFKit should be mounted.
@@ -154,12 +148,14 @@ const PdfEditor = () => {
     return () => PSPDFKit && PSPDFKit.unload(container);
   }, [
     setHelloSignModal,
-    setGeneratePdfModal,
+    setAnalysePdfModal,
     instance,
     editorUrls,
     keyDownHandler,
     handlePdfSave,
     handlePdfPublish,
+    document,
+    handlePdfAnalyse,
   ]);
 
   return <div ref={containerRef} style={{ width: "100%", height: "92vh" }} />;

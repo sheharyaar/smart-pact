@@ -1,7 +1,7 @@
 import { createContext, useState, useRef, useEffect, useContext } from "react";
 import PdfEditor from "../../components/PdfEditor/PdfEditor";
 import HelloSignModal from "./HelloSignModal";
-import GeneratePdfModal from "./GeneratePdfModal";
+import { AnalysePdfModal } from "./AnalysePdfModal";
 import { AuthNav } from "../../components/AuthNav/AuthNav";
 import { useNavigate, useParams } from "react-router-dom";
 import { Spinner } from "flowbite-react";
@@ -11,8 +11,8 @@ import { FetchPdfById } from "../../components/Database/Queries";
 const EditorContext = createContext({
   showHelloSignModal: false,
   setHelloSignModal: () => {},
-  showGeneratePdfModal: false,
-  setGeneratePdfModal: () => {},
+  analysePdfModal: false,
+  setAnalysePdfModal: () => {},
   editorUrls: null,
   setEditorUrls: () => {},
   docDiffJSON: null,
@@ -23,7 +23,7 @@ const EditorContext = createContext({
 
 const EditorPage = () => {
   const [showHelloSignModal, setHelloSignModal] = useState(false);
-  const [showGeneratePdfModal, setGeneratePdfModal] = useState(false);
+  const [analysePdfModal, setAnalysePdfModal] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const instance = useRef(null);
   const navigate = useNavigate();
@@ -67,8 +67,8 @@ const EditorPage = () => {
           value={{
             showHelloSignModal,
             setHelloSignModal,
-            showGeneratePdfModal,
-            setGeneratePdfModal,
+            analysePdfModal,
+            setAnalysePdfModal,
             editorUrls,
             setEditorUrls,
             instance,
@@ -76,9 +76,11 @@ const EditorPage = () => {
           }}
         >
           <AuthNav />
-          <PdfEditor />
           {showHelloSignModal && <HelloSignModal />}
-          {showGeneratePdfModal && <GeneratePdfModal />}
+          <div>
+            {analysePdfModal && <AnalysePdfModal />}
+            <PdfEditor />
+          </div>
         </EditorContext.Provider>
       )}
     </>

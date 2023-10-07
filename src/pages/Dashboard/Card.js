@@ -19,7 +19,7 @@ const DashboardCard = (props) => {
               className="w-[200px] h-[250px] "
             />
           ) : (
-            <props.imgSrc className="w-2/3 h-2/3 mx-auto text-[#4d4dc7]" />
+            <props.imgSrc className="w-1/3 h-1/3 mx-auto text-[#4d4dc7]" />
           ))}
       </div>
       {/* Body for card*/}

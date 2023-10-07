@@ -35,7 +35,7 @@ const AddPdfModal = () => {
       console.log("Currfile Size : ", currFile.size);
       // file size limit 5mb
       if (currFile.size > 5000000) {
-        alert("File size is too big");
+        alert("File size is too big (max 5Mb)");
         return;
       }
 
