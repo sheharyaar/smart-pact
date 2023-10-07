@@ -11,7 +11,14 @@ from sign import (
     HelloSign,
 )
 from ai import AIGenerateRequest, AIService, AIAnalyseNode
-from db import SupabaseAPI, DBPdfListReq, DBPdfReq, DBEmptyPdfReq, DBSavePdfReq
+from db import (
+    SupabaseAPI,
+    DBPdfListReq,
+    DBPdfReq,
+    DBEmptyPdfReq,
+    DBSavePdfReq,
+    DBDeletePdfReq,
+)
 from s3 import AwsService
 
 signApi = None
@@ -318,3 +325,27 @@ async def publishPdf(
         )
 
     return supabaseApi.PublishPdf(file, pdf_id, user_id)
+
+
+@app.post("/api/saveThumbnail")
+async def saveThumbnail() -> JSONResponse:
+    pass
+
+
+@app.post("/api/deletePdf")
+async def deletePdf(req: DBDeletePdfReq) -> JSONResponse:
+    if req.pdf_id is None or req.pdf_id == "":
+        return JSONResponse(
+            content={"message": "pdf_id is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    if req.user_id is None or req.user_id == "":
+        return JSONResponse(
+            content={"message": "user_id is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    return supabaseApi.DeletePdf(req)

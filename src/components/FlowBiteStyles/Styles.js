@@ -289,10 +289,10 @@ const buttonTheme = {
     dark: "text-white bg-gray-800 border border-transparent enabled:hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 dark:bg-gray-800 dark:enabled:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-700",
     failure:
       "text-white bg-red-700 border border-transparent enabled:hover:bg-red-800 focus:ring-4 focus:ring-red-300 dark:bg-red-600 dark:enabled:hover:bg-red-700 dark:focus:ring-red-900",
-    gray: "text-gray-900 bg-white border border-gray-200 enabled:hover:bg-gray-100 enabled:hover:text-cyan-700 :ring-cyan-700 focus:text-cyan-700 dark:bg-transparent dark:text-gray-400 dark:border-gray-600 dark:enabled:hover:text-white dark:enabled:hover:bg-gray-700 focus:ring-2",
-    info: "text-white bg-cyan-700 border border-transparent enabled:hover:bg-cyan-800 focus:ring-4 focus:ring-cyan-300 dark:bg-cyan-600 dark:enabled:hover:bg-cyan-700 dark:focus:ring-cyan-800",
+    gray: "text-gray-900 bg-white border border-gray-200 enabled:hover:bg-gray-100 enabled:hover:text-primary-700 :ring-primary-700 focus:text-primary-700 dark:bg-transparent dark:text-gray-400 dark:border-gray-600 dark:enabled:hover:text-white dark:enabled:hover:bg-gray-700 focus:ring-2",
+    info: "text-white bg-primary-700 border border-transparent enabled:hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:enabled:hover:bg-primary-700 dark:focus:ring-primary-800",
     light:
-      "text-gray-900 bg-white border border-gray-300 enabled:hover:bg-gray-100 focus:ring-4 focus:ring-cyan-300 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:enabled:hover:bg-gray-700 dark:enabled:hover:border-gray-700 dark:focus:ring-gray-700",
+      "text-gray-900 bg-white border border-gray-300 enabled:hover:bg-gray-100 focus:ring-4 focus:ring-primary-300 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:enabled:hover:bg-gray-700 dark:enabled:hover:border-gray-700 dark:focus:ring-gray-700",
     purple:
       " text-xl text-white bg-purple-700 border border-transparent enabled:hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 dark:bg-purple-600 dark:enabled:hover:bg-purple-700 dark:focus:ring-purple-900",
     success:
@@ -300,7 +300,7 @@ const buttonTheme = {
     warning:
       "text-white bg-yellow-400 border border-transparent enabled:hover:bg-yellow-500 focus:ring-4 focus:ring-yellow-300 dark:focus:ring-yellow-900",
     blue: "text-white bg-blue-700 border border-transparent enabled:hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
-    cyan: "text-cyan-900 bg-white border border-cyan-300 enabled:hover:bg-cyan-100 focus:ring-4 focus:ring-cyan-300 :bg-cyan-600 dark:text-white dark:border-cyan-600 dark:enabled:hover:bg-cyan-700 dark:enabled:hover:border-cyan-700 dark:focus:ring-cyan-700",
+    cyan: "text-primary-900 bg-white border border-primary-300 enabled:hover:bg-primary-100 focus:ring-4 focus:ring-primary-300 :bg-primary-600 dark:text-white dark:border-primary-600 dark:enabled:hover:bg-primary-700 dark:enabled:hover:border-primary-700 dark:focus:ring-primary-700",
     green:
       "text-green-900 bg-white border border-green-300 enabled:hover:bg-green-100 focus:ring-4 focus:ring-green-300 :bg-green-600 dark:text-white dark:border-green-600 dark:enabled:hover:bg-green-700 dark:enabled:hover:border-green-700 dark:focus:ring-green-700",
     indigo:
@@ -369,7 +369,7 @@ const buttonTheme = {
     },
   },
   label:
-    "ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-cyan-200 font-semibold text-cyan-800",
+    "ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-200 font-semibold text-primary-800",
   outline: {
     color: {
       gray: "border border-gray-900 dark:border-white",
@@ -449,6 +449,27 @@ const listCardTheme = {
   },
 };
 
+const listGroupTheme = {
+  root: {
+    base: "list-none rounded-md border border-primary-700 bg-white text-sm font-medium text-gray-900 text-left",
+  },
+  item: {
+    base: "[&>*]:first:rounded-t-lg [&>*]:last:rounded-b-lg [&>*]:last:border-b-0",
+    link: {
+      base: "flex items-center w-full border-b border-gray-200 py-2 px-4 dark:border-gray-600",
+      active: {
+        off: "hover:bg-primary-500 hover:text-primary-700 focus:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-700",
+        on: "bg-primary-700 text-white dark:bg-gray-800",
+      },
+      href: {
+        off: "",
+        on: "",
+      },
+      icon: "mr-2 h-4 w-4 fill-current",
+    },
+  },
+};
+
 export {
   tabTheme,
   cardTheme,
@@ -456,4 +477,5 @@ export {
   buttonTheme,
   dropdownTheme,
   listCardTheme,
+  listGroupTheme,
 };

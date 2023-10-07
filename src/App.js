@@ -7,6 +7,7 @@ import { DashBoard } from "./pages/Dashboard/Dashboard";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import { Spinner } from "flowbite-react";
 import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
+import { ToastContainer } from "react-toastify";
 
 import { createClient } from "@supabase/supabase-js";
 
@@ -57,7 +58,10 @@ const ProtectedRoute = (props) => {
       ) : (
         <>
           {auth.isAuthed ? (
-            <>{props.children}</>
+            <>
+              <ToastContainer />
+              {props.children}
+            </>
           ) : (
             <Navigate to="/login" replace />
           )}
