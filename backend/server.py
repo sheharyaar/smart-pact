@@ -1,7 +1,6 @@
 import os
-from typing import Annotated
-
-from fastapi import FastAPI, Form, UploadFile
+from typing import Annotated, List, Dict
+from fastapi import FastAPI, Form, UploadFile, Request
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -11,12 +10,12 @@ from sign import (
     SignTemplateRequest,
     HelloSign,
 )
-from hf import HFGenerateRequest, HuggingFace
+from ai import AIGenerateRequest, AIService, AIAnalyseNode
 from db import SupabaseAPI, DBPdfListReq, DBPdfReq, DBEmptyPdfReq, DBSavePdfReq
 from s3 import AwsService
 
 signApi = None
-hfApi = None
+aiApi = None
 supabaseApi = None
 awsService = None
 
@@ -40,8 +39,8 @@ async def lifespan(app: FastAPI):
     global signApi
     signApi = HelloSign(aws_service=awsService, db_service=supabaseApi)
 
-    global hfApi
-    hfApi = HuggingFace()
+    global aiApi
+    aiApi = AIService()
 
     yield
     # Clean up functions
@@ -166,15 +165,27 @@ async def signCreateFromTemplate(req: SignTemplateRequest) -> JSONResponse:
 
 
 # Huggingface API endpoints
-@app.post("/huggingface/generateDoc")
-async def huggingfaceGenerateDoc(req: HFGenerateRequest) -> JSONResponse:
+@app.post("/ai/generateDoc")
+async def aiGenerateDoc(req: AIGenerateRequest) -> JSONResponse:
     if req.prompt is None or req.prompt == "":
         return JSONResponse(
             content={"message": "prompt is empty or null"},
             status_code=400,
             media_type="application/json",
         )
-    return hfApi.GenerateDoc(req)
+    return aiApi.GenerateDoc(req)
+
+
+@app.post("/ai/analyseDoc")
+async def aiAnalyseDoc(req: List[AIAnalyseNode]) -> JSONResponse:
+    if req is None:
+        return JSONResponse(
+            content={"message": "input is empty or null"},
+            status_code=400,
+            media_type="application/json",
+        )
+
+    return aiApi.AnalyseDoc(req)
 
 
 # user/database api requests

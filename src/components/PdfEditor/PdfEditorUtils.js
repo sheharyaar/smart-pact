@@ -1,25 +1,61 @@
 import { HFGenerateText } from "../HuggingFace/HuggingFace";
 import PSPDFKit from "pspdfkit";
 
-const PdfAnalyseText = async (props) => {
-  const instance = props.instance?.current;
-  if (instance === null || instance === undefined) {
-    console.error("AnalyseText : instance is undefined or null");
-    return;
-  }
+const PdfAnalyseText = (props) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const instance = props.instance?.current;
+      if (instance === null || instance === undefined) {
+        console.error("AnalyseText : instance is undefined or null");
+        return;
+      }
 
-  const currPageIndex = instance.viewState?.currentPageIndex;
-  if (currPageIndex === null || currPageIndex === undefined) {
-    console.error("AnalyseText : currPageIndex is undefined or null");
-    return;
-  }
-  const textLines = await instance.textLinesForPageIndex(currPageIndex);
-  textLines.forEach((textLine, textLineIndex) => {
-    console.log(`Content for text line ${textLineIndex}`);
-    console.log(`Text: ${textLine.contents}`);
-    console.log(`Id: ${textLine.id}`);
-    console.log(`Page index: ${textLine.pageIndex}`);
-    console.log(`Bounding box: ${JSON.stringify(textLine.boundingBox.toJS())}`);
+      const currPageIndex = instance.viewState?.currentPageIndex;
+      if (currPageIndex === null || currPageIndex === undefined) {
+        console.error("AnalyseText : currPageIndex is undefined or null");
+        return;
+      }
+      const textLines = await instance.textLinesForPageIndex(currPageIndex);
+      // filter out only the pageIndex, id and the text content
+      const filteredTextLines = textLines.map((textLine) => {
+        return {
+          pageIndex: textLine.pageIndex,
+          id: textLine.id,
+          text: textLine.contents,
+        };
+      });
+
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(filteredTextLines),
+      };
+
+      const resp = await fetch("http://localhost:8000/ai/analyseDoc", options);
+      if (resp.status >= 200 && resp.status < 300) {
+        const data = await resp.json();
+        console.log("AnalyseText : ", JSON.parse(data.content));
+
+        // fetch bounding box from global textLines and add them to the parsed
+        // ambiguous object for each entry
+        const parsed = JSON.parse(data.content);
+        const ambiguous = parsed.ambiguous;
+        const bBoxes = textLines.filter((textLine) => {
+          return ambiguous.some((amb) => {
+            return amb.id === textLine.id;
+          });
+        });
+
+        resolve({ data: parsed, bBoxes: bBoxes });
+      } else {
+        reject(new Error(`HTTP Error ${resp.status}`));
+      }
+    } catch (e) {
+      console.error("PdfAnalyseText : error analysing text", e);
+      reject(e);
+    }
   });
 };
 
