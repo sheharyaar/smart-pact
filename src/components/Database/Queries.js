@@ -149,4 +149,42 @@ const CreateUploadDoc = (props) => {
   });
 };
 
-export { FetchPdfList, CreateEmptyDoc, CreateUploadDoc, FetchPdfById };
+const PdfDelete = (props) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { data, error } = await props.supabase.auth.getSession();
+      if (error) throw error;
+
+      const user_id = data.session.user.id;
+      const pdf_id = props.pdf_id;
+
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: user_id, pdf_id: pdf_id }),
+      };
+
+      const resp = await fetch("http://localhost:8000/api/deletePdf", options);
+      if (resp.status >= 200 && resp.status < 300) {
+        const data = await resp.json();
+        console.log("PdfDelete : ", data);
+        resolve("success");
+      } else {
+        reject(new Error(`HTTP Error ${resp.status}`));
+      }
+    } catch (e) {
+      console.error("PdfDelete : error deleting pdf", e);
+      reject(e);
+    }
+  });
+};
+
+export {
+  FetchPdfList,
+  CreateEmptyDoc,
+  CreateUploadDoc,
+  FetchPdfById,
+  PdfDelete,
+};

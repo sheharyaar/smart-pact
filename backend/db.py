@@ -11,6 +11,11 @@ import io
 from fastapi import Form, UploadFile
 
 
+class DBDeletePdfReq(BaseModel):
+    user_id: str
+    pdf_id: str
+
+
 class DBSavePdfReq(BaseModel):
     user_id: str
     pdf_id: str
@@ -148,7 +153,8 @@ class SupabaseAPI:
                 self.aws_service.s3.download_fileobj(
                     self.aws_service.bucket_name, json_path, f
                 )
-            except:
+            except Exception as e:
+                print("Error in fetching json : ", e)
                 # send without json if not found
                 return JSONResponse(
                     content={
@@ -269,7 +275,8 @@ class SupabaseAPI:
             # remove the created file
             os.remove(path)
             return resp
-        except:
+        except Exception as e:
+            print("Execption in uploading PDF : ", e)
             return JSONResponse(
                 content={"message": "error in uploading file"},
                 status_code=400,
@@ -320,7 +327,8 @@ class SupabaseAPI:
                     media_type="application/json",
                 )
 
-        except:
+        except Exception as e:
+            print("Execption in saving PDF : ", e)
             return JSONResponse(
                 content={"message": "error in saving file"},
                 status_code=400,
@@ -368,9 +376,67 @@ class SupabaseAPI:
                     status_code=400,
                     media_type="application/json",
                 )
-        except:
+        except Exception as e:
+            print("Execption in uploading PDF : ", e)
             return JSONResponse(
                 content={"message": "error in uploading file"},
+                status_code=400,
+                media_type="application/json",
+            )
+
+    def SaveThumbnail(self) -> JSONResponse:
+        pass
+
+    def DeletePdf(self, req: DBDeletePdfReq) -> JSONResponse:
+        # check if the user_id is the creator
+        try:
+            data, error = (
+                self.client.table("pdf")
+                .select("pdf_id, created_by")
+                .eq("pdf_id", req.pdf_id)
+                .eq("created_by", req.user_id)
+                .execute()
+            )
+
+            if data[1] is None:
+                return JSONResponse(
+                    content={"message": "pdf is not found"},
+                    status_code=400,
+                    media_type="application/json",
+                )
+
+            if error[1] is not None:
+                print("Error in fetching pdf info : ", error)
+                return JSONResponse(
+                    content={"message": "error"},
+                    status_code=400,
+                    media_type="application/json",
+                )
+
+            # delete from db
+            data, error = (
+                self.client.table("pdf")
+                .delete()
+                .eq("pdf_id", req.pdf_id)
+                .eq("created_by", req.user_id)
+                .execute()
+            )
+            # delete from S3
+
+            path = self.aws_service.pdf_prefix + req.pdf_id + "/"
+            print("Delete Path : ", path)
+            self.aws_service.DeleteFolder(path)
+
+            return JSONResponse(
+                content={"message": "success"},
+                status_code=200,
+                media_type="application/json",
+            )
+
+        except Exception as e:
+            print("Execption in deleting PDF : ", e)
+            return JSONResponse(
+                content={"message": "error in deleting file"},
                 status_code=400,
                 media_type="application/json",
             )

@@ -70,12 +70,28 @@ class AwsService:
     Delete a file from an S3 bucket
     """
 
-    def DeleteFile(self, path_s3) -> bool:
+    def DeleteFolder(self, path_s3) -> bool:
         try:
-            self.s3.delete_object(Bucket=self.bucket_name, Key=path_s3)
+            # List all objects within the folder
+            objects_to_delete = self.s3.list_objects_v2(
+                Bucket=self.bucket_name, Prefix=path_s3
+            )
+
+            if "Contents" in objects_to_delete:
+                # Prepare a list of objects to delete
+                delete_keys = {"Objects": []}
+                delete_keys["Objects"] = [
+                    {"Key": obj["Key"]} for obj in objects_to_delete["Contents"]
+                ]
+
+                # Delete the objects
+                self.s3.delete_objects(Bucket=bucket_name, Delete=delete_keys)
+                print(f"All objects in {path_s3} deleted.")
+            else:
+                print(f"No objects found in {path_s3}.")
             return True
         except Exception as e:
-            print(e)
+            print("Delete File Exception ", e)
             return False
 
     """
@@ -93,19 +109,3 @@ class AwsService:
         except Exception as e:
             print(e)
             return None
-
-    # """
-    # Upload
-    # """
-
-    # def PutFile(self, content_type, file_name_or_key, buffer):
-    #     try:
-    #         self.s3.put_object(
-    #             Bucket=self.bucket_name,
-    #             Key=file_name_or_key,
-    #             Body=buffer,
-    #             ContentType=content_type,
-    #         )
-    #         return {"fileKey": file_name_or_key}
-    #     except NoCredentialsError:
-    #         return None

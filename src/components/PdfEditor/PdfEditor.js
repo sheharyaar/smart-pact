@@ -2,6 +2,8 @@ import { useCallback, useContext, useEffect, useRef } from "react";
 import { EditorContext } from "../../pages/EditorPage/EditorPage";
 import { PdfPublish, PdfSave } from "./PdfEditorUtils";
 import { AuthContext } from "../../App";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UnneededPlugins = ["signature", "note"];
 
@@ -24,6 +26,9 @@ const PdfEditor = () => {
   }
 
   const handlePdfPublish = useCallback(() => {
+    toast.info("Publishing PDF", {
+      position: toast.POSITION.TOP_RIGHT,
+    });
     // pdf file export
     PdfPublish({
       instance: instance,
@@ -32,6 +37,9 @@ const PdfEditor = () => {
     })
       .then((data) => {
         console.log("PdfPublish : ", data);
+        toast.success("PDF Published", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
       })
       .catch((e) => {
         console.error("PdfPublish : error publishing pdf", e);
@@ -39,9 +47,15 @@ const PdfEditor = () => {
   }, [instance, supabase, document]);
 
   const handlePdfSave = useCallback(() => {
+    toast.info("Saving PDF", {
+      position: toast.POSITION.TOP_RIGHT,
+    });
     PdfSave({ instance: instance, supabase: supabase, pdf_id: document })
       .then((data) => {
         console.log("PdfSave : ", data);
+        toast.success("PDF Saved", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
       })
       .catch((e) => {
         console.error("PdfSave : error saving pdf", e);
@@ -143,6 +157,8 @@ const PdfEditor = () => {
         "keydown",
         keyDownHandler
       );
+
+      // save the thumbnail to the database
     })();
 
     return () => PSPDFKit && PSPDFKit.unload(container);
@@ -158,7 +174,9 @@ const PdfEditor = () => {
     handlePdfAnalyse,
   ]);
 
-  return <div ref={containerRef} style={{ width: "100%", height: "92vh" }} />;
+  return (
+    <div ref={containerRef} style={{ width: "100%", height: "92vh" }}></div>
+  );
 };
 
 export default PdfEditor;

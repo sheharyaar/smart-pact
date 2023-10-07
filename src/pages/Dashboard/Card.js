@@ -1,14 +1,43 @@
-import { Card, Spinner } from "flowbite-react";
-import { cardTheme } from "../../components/FlowBiteStyles/Styles";
+import { Card, Spinner, ListGroup } from "flowbite-react";
+import {
+  cardTheme,
+  listGroupTheme,
+} from "../../components/FlowBiteStyles/Styles";
 import { AiOutlinePlus } from "react-icons/ai";
 import { CiImageOff } from "react-icons/ci";
 import { DashboardContext } from "./Dashboard";
-import { useContext } from "react";
+import { useContext, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { MdDeleteOutline } from "react-icons/md";
 
 const DashboardCard = (props) => {
+  const { pdfDeleteModal, pdfDeleteRef } = useContext(DashboardContext);
+
+  const handlePdfDelete = useCallback(
+    (e) => {
+      e.stopPropagation();
+      pdfDeleteRef.current = props.id;
+      pdfDeleteModal();
+    },
+    [pdfDeleteModal, pdfDeleteRef, props.id]
+  );
+
   return (
-    <Card key={props.id} theme={cardTheme} onClick={props.onClick}>
+    <Card
+      key={props.id}
+      theme={cardTheme}
+      onClick={props.onClick}
+      className="group relative"
+    >
+      {props.editEnable && (
+        <div className="absolute top-[5px] right-[5px] z-40 group-hover:visible invisible">
+          <ListGroup theme={listGroupTheme}>
+            <ListGroup.Item theme={listGroupTheme} onClick={handlePdfDelete}>
+              <MdDeleteOutline className="fill-primary-900" />
+            </ListGroup.Item>
+          </ListGroup>
+        </div>
+      )}
       {/* Image addition to card : if not string then rernder the element */}
       <div className="basis-4/5 flex flex-cols items-center border-b-2">
         {props.imgSrc &&
@@ -22,7 +51,6 @@ const DashboardCard = (props) => {
             <props.imgSrc className="w-1/3 h-1/3 mx-auto text-[#4d4dc7]" />
           ))}
       </div>
-      {/* Body for card*/}
       {props.body && (
         <div className="mt-[5px] basis-1/5">
           <p className="font-normal text-gray-700 dark:text-gray-400">
@@ -54,6 +82,7 @@ const DashboardCardSection = (props) => {
               id={"add-card"}
               imgSrc={AiOutlinePlus}
               body={"Add a new document"}
+              editEnable={false}
               onClick={() => {
                 setAddPdfModal(true);
               }}
@@ -68,6 +97,7 @@ const DashboardCardSection = (props) => {
                 }
                 id={card.pdf_id}
                 body={card.pdf.pdf_name}
+                editEnable={props.editEnable}
                 onClick={() => {
                   navigate(`/editor/${card.pdf_id}`);
                 }}
