@@ -10,7 +10,7 @@ const HFGenerateText = (prompt) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/huggingface/generateDoc",
+        `${process.env.REACT_APP_BACKEND_URL}/api/huggingface/generateDoc`,
         requestOptions
       );
       if (response.status >= 200 && response.status < 300) {

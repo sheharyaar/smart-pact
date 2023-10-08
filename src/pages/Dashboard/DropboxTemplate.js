@@ -28,7 +28,7 @@ const CreateFromTemplate = (props) => {
         }),
       };
       const response = await fetch(
-        "http://localhost:8000/helloSign/createFromTemplate",
+        `${process.env.REACT_APP_BACKEND_URL}/api/helloSign/createFromTemplate`,
         options
       );
 

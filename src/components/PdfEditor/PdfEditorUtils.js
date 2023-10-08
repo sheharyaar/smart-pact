@@ -41,7 +41,10 @@ const PdfAnalyseText = (props) => {
         }),
       };
 
-      const resp = await fetch("http://localhost:8000/ai/analyseDoc", options);
+      const resp = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/ai/analyseDoc`,
+        options
+      );
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();
 
@@ -213,7 +216,10 @@ const PdfSave = (props) => {
         }),
       };
 
-      const resp = await fetch("http://localhost:8000/api/savePdf", options);
+      const resp = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/savePdf`,
+        options
+      );
       if (resp.status >= 200 && resp.status < 300) {
         resolve("Saved");
       } else {
@@ -253,7 +259,10 @@ const PdfPublish = (props) => {
         body: formData,
       };
 
-      const resp = await fetch("http://localhost:8000/api/publishPdf", options);
+      const resp = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/publishPdf`,
+        options
+      );
       if (resp.status >= 200 && resp.status < 300) {
         await resp.json();
         resolve("success");

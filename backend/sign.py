@@ -6,11 +6,6 @@ from s3 import AwsService
 from db import SupabaseAPI, DBPdfCreateReq
 import os
 
-sign_api_key = "f59d2ae8271998faa458210c174a85f96085e03f0d1582cc03da2415199b0312"
-sign_client_id = "973b3a1562379a15e47fb44b611b8388"
-sign_client_secret = "062b80607470b5d85c05484efbe499f9"
-
-
 class OauthTokenRequest(BaseModel):
     state: str
     code: str
@@ -28,15 +23,15 @@ class SignTemplateRequest(BaseModel):
     template_name: str
 
 
-class HelloSign:
+class DropboxSign:
     def __init__(self, aws_service: AwsService, db_service: SupabaseAPI) -> None:
-        self.client_id = sign_client_id
-        self.client_secret = sign_client_secret
+        self.client_id = os.environ.get("DROPBOX_SIGN_CLIENT_ID")
+        self.client_secret = os.environ.get("DROPBOX_SIGN_CLIENT_SECRET")   
         self.aws_service = aws_service
         self.db_service = db_service
 
     """
-        Function to generate HelloSign Oauth Token
+        Function to generate DropboxSign Oauth Token
     """
 
     def GetOauthToken(self, req: OauthTokenRequest) -> JSONResponse:
@@ -79,7 +74,7 @@ class HelloSign:
                 )
 
     """
-        Function to refresh HelloSign Oauth Token
+        Function to refresh DropboxSign Oauth Token
     """
 
     def RefreshOauthToken(self, req: OauthTokenRequest) -> JSONResponse:
@@ -90,7 +85,7 @@ class HelloSign:
         )
 
     """
-        Function to fetch HelloSign templates
+        Function to fetch DropboxSign templates
     """
 
     def FetchTemplates(self, req: SignTemplateListRequest) -> JSONResponse:

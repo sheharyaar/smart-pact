@@ -27,7 +27,10 @@ const HelloSignOauthCb = () => {
         },
         body: JSON.stringify({ code: code, state: state }),
       };
-      await fetch("http://localhost:8000/helloSign/oauthToken", requestOptions)
+      await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/helloSign/oauthToken`,
+        requestOptions
+      )
         .then((response) => {
           if (response.status >= 200 && response.status < 300) {
             return response.json();

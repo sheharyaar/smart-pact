@@ -8,7 +8,7 @@ from sign import (
     OauthTokenRequest,
     SignTemplateListRequest,
     SignTemplateRequest,
-    HelloSign,
+    DropboxSign,
 )
 from ai import AIGenerateRequest, AIService, AIAnalyseRequest
 from db import (
@@ -20,6 +20,18 @@ from db import (
     DBDeletePdfReq,
 )
 from s3 import AwsService
+
+# Environment variables
+required_env = [
+      "SUPABASE_URL",
+      "SUPABASE_KEY",
+      "AWS_ACCESS_KEY_ID",
+      "AWS_SECRET_ACCESS_KEY",
+      "AWS_REGION_NAME",
+      "AWS_BUCKET_NAME",
+      "DROPBOX_SIGN_CLIENT_ID",
+      "DROPBOX_SIGN_CLIENT_SECRET"
+]
 
 signApi = None
 aiApi = None
@@ -33,6 +45,11 @@ async def lifespan(app: FastAPI):
     # Loading functions
     print("Running startup functions")
 
+    # Ensure all environment variables are set  
+    for env in required_env:
+        if env not in os.environ:
+            raise Exception(f"Environment variable {env} not set")
+        
     # Ensure the folder exists; create it if it doesn't
     if not os.path.exists("./temp"):
         os.makedirs("./temp")
@@ -44,7 +61,7 @@ async def lifespan(app: FastAPI):
     supabaseApi = SupabaseAPI(aws_service=awsService)
 
     global signApi
-    signApi = HelloSign(aws_service=awsService, db_service=supabaseApi)
+    signApi = DropboxSign(aws_service=awsService, db_service=supabaseApi)
 
     global aiApi
     aiApi = AIService()
@@ -67,13 +84,13 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+@app.get("/api/health")
 async def root():
     return {"message": "Hello World"}
 
 
 # Dropbox Sign API endpoints
-@app.post("/helloSign/oauthToken")
+@app.post("/api/helloSign/oauthToken")
 async def signOauthToken(req: OauthTokenRequest) -> JSONResponse:
     if req.code is None or req.state is None:
         return JSONResponse(
@@ -92,7 +109,7 @@ async def signOauthToken(req: OauthTokenRequest) -> JSONResponse:
     return signApi.GetOauthToken(req)
 
 
-@app.post("/helloSign/refreshOauthToken")
+@app.post("/api/helloSign/refreshOauthToken")
 async def signRefreshOauthToken(req: OauthTokenRequest) -> JSONResponse:
     if req.code is None or req.state is None:
         return JSONResponse(
@@ -111,7 +128,7 @@ async def signRefreshOauthToken(req: OauthTokenRequest) -> JSONResponse:
     return signApi.RefreshOauthToken(req)
 
 
-@app.post("/helloSign/fetchTemplates")
+@app.post("/api/helloSign/fetchTemplates")
 async def signFetchTemplates(req: SignTemplateListRequest) -> JSONResponse:
     if req.token is None or req.token == "":
         return JSONResponse(
@@ -130,7 +147,7 @@ async def signFetchTemplates(req: SignTemplateListRequest) -> JSONResponse:
     return signApi.FetchTemplates(req)
 
 
-@app.post("/helloSign/createFromTemplate")
+@app.post("/api/helloSign/createFromTemplate")
 async def signCreateFromTemplate(req: SignTemplateRequest) -> JSONResponse:
     print(req)
     if req.token is None or req.token == "":
@@ -172,7 +189,7 @@ async def signCreateFromTemplate(req: SignTemplateRequest) -> JSONResponse:
 
 
 # Huggingface API endpoints
-@app.post("/ai/generateDoc")
+@app.post("/api/ai/generateDoc")
 async def aiGenerateDoc(req: AIGenerateRequest) -> JSONResponse:
     if req.prompt is None or req.prompt == "":
         return JSONResponse(
@@ -183,7 +200,7 @@ async def aiGenerateDoc(req: AIGenerateRequest) -> JSONResponse:
     return aiApi.GenerateDoc(req)
 
 
-@app.post("/ai/analyseDoc")
+@app.post("/api/ai/analyseDoc")
 async def aiAnalyseDoc(req: AIAnalyseRequest) -> JSONResponse:
     print(req)
     if req is None:

@@ -1,6 +1,3 @@
-supabase_url = "https://dijwhvtevpfjabedbszq.supabase.co"
-supabase_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpandodnRldnBmamFiZWRic3pxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTY5NTk4OTgxMSwiZXhwIjoyMDExNTY1ODExfQ.s2RQU2kYTVaWtrVbrMyxWwxa2vxtbDqdKeYaZpkSVgk"
-
 from supabase import create_client, Client
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
@@ -49,8 +46,8 @@ class SupabaseAPI:
 
     def __init__(self, aws_service: AwsService):
         self.aws_service = aws_service
-        self.url = supabase_url
-        self.key = supabase_key
+        self.url = os.environ.get("SUPABASE_URL")
+        self.key = os.environ.get("SUPABASE_KEY")
         self.client: Client = create_client(self.url, self.key)
 
     """

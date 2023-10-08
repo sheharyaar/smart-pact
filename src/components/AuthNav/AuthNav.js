@@ -69,7 +69,9 @@ const AuthNav = (props) => {
     >
       <div className="h-[8vh]">
         <Navbar fluid rounded>
-          <Navbar.Brand href="http://localhost:3000/dashboard">
+          <Navbar.Brand
+            href={`${process.env.REACT_APP_FRONTEND_URL}/dashboard`}
+          >
             <img
               alt="Smart pact"
               className="mr-3 h-6 sm:h-9"

@@ -15,7 +15,7 @@ const FetchPdfList = (props) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/api/userPdfList",
+        `${process.env.REACT_APP_BACKEND_URL}/api/userPdfList`,
         userOptions
       );
 
@@ -51,7 +51,10 @@ const FetchPdfById = (props) => {
         }),
       };
 
-      const resp = await fetch("http://localhost:8000/api/fetchPdf", options);
+      const resp = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/fetchPdf`,
+        options
+      );
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();
         let pdfDiff = JSON.parse(data.diff_json);
@@ -95,7 +98,7 @@ const CreateEmptyDoc = (props) => {
       };
 
       const resp = await fetch(
-        "http://localhost:8000/api/createEmptyPdf",
+        `${process.env.REACT_APP_BACKEND_URL}/api/createEmptyPdf`,
         options
       );
 
@@ -126,7 +129,7 @@ const CreateUploadDoc = (props) => {
       };
 
       const resp = await fetch(
-        "http://localhost:8000/api/createUploadPdf",
+        `${process.env.REACT_APP_BACKEND_URL}/api/createUploadPdf`,
         options
       );
 
@@ -160,7 +163,10 @@ const PdfDelete = (props) => {
         body: JSON.stringify({ user_id: user_id, pdf_id: pdf_id }),
       };
 
-      const resp = await fetch("http://localhost:8000/api/deletePdf", options);
+      const resp = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/deletePdf`,
+        options
+      );
       if (resp.status >= 200 && resp.status < 300) {
         await resp.json();
         resolve("success");

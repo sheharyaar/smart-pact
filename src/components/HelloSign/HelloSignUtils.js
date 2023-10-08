@@ -24,7 +24,7 @@ const FetchTemplates = (props) => {
 
     try {
       const response = await fetch(
-        "http://localhost:8000/helloSign/fetchTemplates",
+        `${process.env.REACT_APP_BACKEND_URL}/api/helloSign/fetchTemplates`,
         options
       );
       if (response.status >= 200 && response.status < 300) {
