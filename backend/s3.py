@@ -3,22 +3,16 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 from botocore.client import Config
 
-aws_access_key_id = "AKIAVXF3LRV3V4D6U3AZ"
-aws_secret_access_key = "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"
-region_name = "ap-south-1"
-bucket_name = "smart-pact"
-
-
 class AwsService:
     def __init__(self):
-        self.bucket_name = bucket_name
+        self.bucket_name = os.environ.get("AWS_BUCKET_NAME")
         self.profile_img_prefix = "profile_img/"
         self.pdf_prefix = "user_pdf/"
         self.s3 = boto3.client(
             "s3",
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-            region_name=region_name,  # Replace with your desired region
+            aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+            aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            region_name=os.environ.get("AWS_REGION_NAME"),  # Replace with your desired region
             config=Config(signature_version="s3v4"),
         )
 
@@ -85,7 +79,7 @@ class AwsService:
                 ]
 
                 # Delete the objects
-                self.s3.delete_objects(Bucket=bucket_name, Delete=delete_keys)
+                self.s3.delete_objects(Bucket=self.bucket_name, Delete=delete_keys)
                 print(f"All objects in {path_s3} deleted.")
             else:
                 print(f"No objects found in {path_s3}.")

@@ -73,10 +73,10 @@ const ProtectedRoute = (props) => {
 };
 
 function App() {
-  const supabase_url = "https://dijwhvtevpfjabedbszq.supabase.co";
-  const anon_key =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRpandodnRldnBmamFiZWRic3pxIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTU5ODk4MTEsImV4cCI6MjAxMTU2NTgxMX0.JHlNWYoHAJa1rLEsiXiILl3d287yjSKToPpF2SvQEJc";
-  const supabase = createClient(supabase_url, anon_key);
+  const supabase = createClient(
+    `${process.env.REACT_APP_SUPABASE_URL}`,
+    `${process.env.REACT_APP_SUPABASE_ANON_KEY}`
+  );
   if (supabase === null || supabase === undefined) {
     console.error("Supabase client is null");
   }
