@@ -283,7 +283,7 @@ const formTheme = {
 };
 
 const buttonTheme = {
-  base: "group flex items-stretch items-center justify-center p-0.5 text-center font-bold relative focus:z-10 focus:outline-none",
+  base: "group flex items-stretch items-center justify-center p-0.5 text-center relative focus:z-10 focus:outline-none",
   fullSized: "w-full",
   color: {
     dark: "text-white bg-gray-800 border border-transparent enabled:hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 dark:bg-gray-800 dark:enabled:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-700",
@@ -369,7 +369,7 @@ const buttonTheme = {
     },
   },
   label:
-    "ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-200 font-semibold text-primary-800",
+    "ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-200 text-primary-800",
   outline: {
     color: {
       gray: "border border-gray-900 dark:border-white",
@@ -454,11 +454,11 @@ const listGroupTheme = {
     base: "list-none rounded-md border border-primary-700 bg-white text-sm font-medium text-gray-900 text-left",
   },
   item: {
-    base: "[&>*]:first:rounded-t-lg [&>*]:last:rounded-b-lg [&>*]:last:border-b-0",
+    base: "[&>*]:first:rounded-t-sm [&>*]:last:rounded-b-sm [&>*]:last:border-b-0",
     link: {
-      base: "flex items-center w-full border-b border-gray-200 py-2 px-4 dark:border-gray-600",
+      base: "flex items-center w-full py-2 px-4 dark:border-gray-600",
       active: {
-        off: "hover:bg-primary-500 hover:text-primary-700 focus:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-700",
+        off: "bg-primary-700 hover:bg-primary-900 hover:text-primary-800 focus:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-700",
         on: "bg-primary-700 text-white dark:bg-gray-800",
       },
       href: {
@@ -470,6 +470,61 @@ const listGroupTheme = {
   },
 };
 
+const modalSideBarTheme = {
+  root: {
+    base: "fixed top-0 left-0 h-screen w-[500px] overflow-y-auto overflow-x-hidden md:inset-0 md:h-full bg-primary-400",
+    show: {
+      on: "flex",
+      off: "hidden",
+    },
+    sizes: {
+      sm: "max-w-sm",
+      md: "max-w-md",
+      lg: "max-w-lg",
+      xl: "max-w-xl",
+      "2xl": "max-w-2xl",
+      "3xl": "max-w-3xl",
+      "4xl": "max-w-4xl",
+      "5xl": "max-w-5xl",
+      "6xl": "max-w-6xl",
+      "7xl": "max-w-7xl",
+    },
+    positions: {
+      "top-left": "items-start justify-start",
+      "top-center": "items-start justify-center",
+      "top-right": "items-start justify-end",
+      "center-left": "items-center justify-start",
+      center: "items-center justify-center",
+      "center-right": "items-center justify-end",
+      "bottom-right": "items-end justify-end",
+      "bottom-center": "items-end justify-center",
+      "bottom-left": "items-end justify-start",
+    },
+  },
+  content: {
+    base: "relative h-screen w-full",
+    inner:
+      "relative bg-white border-r shadow dark:bg-gray-700 flex flex-col h-full",
+  },
+  body: {
+    base: "p-6 flex-1 overflow-auto",
+    popup: "pt-0",
+  },
+  header: {
+    base: "flex items-start justify-between rounded-t dark:border-gray-600 border-b p-5 border-primary-600",
+    popup: "p-2 border-b-0",
+    title: "text-xl font-medium text-primary-800 dark:text-white",
+    close: {
+      base: "ml-auto inline-flex items-center rounded-lg bg-transparent p-1.5 text-sm text-primary-900 hover:bg-gray-200 hover:text-gray-900 dark:hover:bg-gray-600 dark:hover:text-white",
+      icon: "h-5 w-5",
+    },
+  },
+  footer: {
+    base: "flex items-center space-x-2 rounded-b border-gray-200 p-6 dark:border-gray-600",
+    popup: "border-t",
+  },
+};
+
 export {
   tabTheme,
   cardTheme,
@@ -478,4 +533,5 @@ export {
   dropdownTheme,
   listCardTheme,
   listGroupTheme,
+  modalSideBarTheme,
 };

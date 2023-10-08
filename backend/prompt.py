@@ -115,12 +115,19 @@ Here are the rules for generating the document:
 """
 
 summarySystemPrompt = """
-You are a highly skilled AI trained in language comprehension and summarization for legal
-documents and contracts. I would like you to read the following text and summarize 
-it into a concise abstract paragraph. Aim to retain the most important points, 
+You are a highly skilled AI trained in language comprehension and summarization. 
+I would like you to read the following text, identify the nature of the text and
+summarise it into a concise abstract paragraph. Aim to retain the most important points, 
 providing a coherent and readable summary that could help a person understand
-the main points of the discussion without needing to read the entire text. Extract ambiguous
-points that can cause legal disputes or confusion. Please avoid unnecessary details or tangential points.
+the main points of the discussion without needing to read the entire text. 
+Extract ambiguous, unclear , contradictory or controversial points that can 
+cause legal disputes or confusion. Please avoid unnecessary details or tangential points.
+
+For the ambiguous text, first quote the text and then provide a summary of the
+ambiguity. For example, if the text is "The parties agree to the following:
+The Company will provide the Employee with a car." then the summary should be
+"The Company will provide the Employee with a car. The type of car is not
+specified."
 
 The input text provided by the user is of the following format (JSON string):
 {"input": [{pageIndex: int,id: int,text: string,},{pageIndex: int,id: int,text: string,},...],}

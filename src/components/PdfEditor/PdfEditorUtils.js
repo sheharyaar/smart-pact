@@ -4,6 +4,11 @@ import PSPDFKit from "pspdfkit";
 const PdfAnalyseText = (props) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const openAiKey = sessionStorage.getItem("OPEN_AI_KEY");
+      if (openAiKey === null || openAiKey === undefined || openAiKey === "") {
+        throw Error("PdfAnalyseText : openAiKey is null or undefined");
+      }
+
       const instance = props.instance?.current;
       if (instance === null || instance === undefined) {
         console.error("AnalyseText : instance is undefined or null");
@@ -30,13 +35,15 @@ const PdfAnalyseText = (props) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(filteredTextLines),
+        body: JSON.stringify({
+          openAiKey: openAiKey,
+          input: filteredTextLines,
+        }),
       };
 
       const resp = await fetch("http://localhost:8000/ai/analyseDoc", options);
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();
-        console.log("AnalyseText : ", JSON.parse(data.content));
 
         // fetch bounding box from global textLines and add them to the parsed
         // ambiguous object for each entry
@@ -185,7 +192,6 @@ const PdfSave = (props) => {
         console.error("PdfSave : instance is undefined or null");
         return;
       }
-      console.log("Saving...");
 
       const diff_json = await instance.exportInstantJSON();
       if (diff_json === null || diff_json === undefined) {
@@ -247,11 +253,9 @@ const PdfPublish = (props) => {
         body: formData,
       };
 
-      console.log("PdfPublish body: ", options.body);
       const resp = await fetch("http://localhost:8000/api/publishPdf", options);
       if (resp.status >= 200 && resp.status < 300) {
-        const data = await resp.json();
-        console.log("PdfPublish : ", data);
+        await resp.json();
         resolve("success");
       } else {
         reject(new Error(`HTTP Error ${resp.status}`));

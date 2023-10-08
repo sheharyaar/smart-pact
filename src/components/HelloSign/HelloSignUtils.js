@@ -29,7 +29,6 @@ const FetchTemplates = (props) => {
       );
       if (response.status >= 200 && response.status < 300) {
         const data = await response.json();
-        console.log("FetchTemplates : ", data);
         resolve(data);
       } else {
         reject(new Error(`HTTP Error ${response.status}`));

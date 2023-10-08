@@ -20,35 +20,30 @@ npm start
 
 - HelloSign
   - [ ] Fetch Signature
-  - [ ] Fetch templates
-  - [ ] Refresh the token
-  - [ ] Add timeout for oauth in both popup and button
-  - [ ] Seperate oauth into a component
+  - [X] Fetch templates
+  - [X] Add timeout for oauth in both popup and button
+  - [X] Seperate oauth into a component
 
-- HuggingFace
-  - [ ] Find a good document model
-  - [ ] Train the model according to the SDK
-  - [x] Generate content and programatically add them to the pdf
-  - [ ] Ability to fetch the text available (annotations) and reviewing them
+- OpenAI
+  - [ ] Generate content and programatically add them to the pdf
+  - [X] Ability to fetch the text available (annotations) and reviewing them
 
 - DashBoard
-  - [ ] Add ability to add page and templates
-  - [ ] In the two sections (created and shared), for shared show a red dot (with a number ??) for unread shared docs
-  - [ ] Add 3 dots to star, download, delete a pdf
+  - [X] Add ability to add page and templates
 
 - Timeline
   - [ ] Check the representation of annoations (save in a suitable format in cloud with diff)
   - [ ] Add them together somehow and generate a pdf id.
 
 - PDF Loading and Saving
-  - [ ] Save as Arraybuffer and then send to the python backend for local saving
-  - [ ] Save json for present annotations for history
+  - [X] Save as Arraybuffer and then send to the python backend for local saving
+  - [X] Save json for present annotations for history
   - [ ] Save also in localstorage for fast access, if not found request from server
   - [ ] Hash the buffer into a checksum  and send to DB for later fetching
 
 
 Ideas :
 - [ ] Translation of Contracts
-- [ ] Summary of Contract
+- [X] Summary of Contract
 - [ ] Question Answer format for Contracts
 - [ ] Collaborative pdf editor

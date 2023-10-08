@@ -112,10 +112,9 @@ class SupabaseAPI:
             # user_id has the role of an editor
             data, error = (
                 self.client.table("global_pdf")
-                .select("pdf_id, pdf(pdf_name)")
+                .select("pdf_id, role, pdf(pdf_name)")
                 .eq("user_id", req.user_id)
                 .eq("pdf_id", req.pdf_id)
-                .eq("role", "editor")
                 .execute()
             )
             if data[1] is None:
@@ -161,6 +160,7 @@ class SupabaseAPI:
                         "pdf_url": pdf_file["downloadUrl"],
                         "diff_json": None,
                         "pdf_name": data[1][0]["pdf"]["pdf_name"],
+                        "role": data[1][0]["role"],
                     },
                     status_code=200,
                     media_type="application/json",
@@ -174,6 +174,7 @@ class SupabaseAPI:
                     "pdf_url": pdf_file["downloadUrl"],
                     "diff_json": json_text,
                     "pdf_name": data[1][0]["pdf"]["pdf_name"],
+                    "role": data[1][0]["role"],
                 },
                 status_code=200,
                 media_type="application/json",
@@ -192,7 +193,7 @@ class SupabaseAPI:
             # create a db entry in pdf
             # returns the pdf_id creader
             print("Creating pdf entry", req.user_id)
-            pdf_name = req.pdf_name + ".pdf"
+            pdf_name = req.pdf_name
             data, count = self.client.rpc(
                 "create_pdf", {"req_user_id": req.user_id, "req_pdf_name": pdf_name}
             ).execute()
@@ -258,11 +259,12 @@ class SupabaseAPI:
         file_name: Annotated[str, Form()],
         user_id: Annotated[str, Form()],
     ) -> JSONResponse:
-        # save the file and call create pdf
-        path = "./temp/" + user_id + "_" + file_name
         # check if the file name has pdf extension
-        if not file_name.endswith(".pdf"):
-            path = path + ".pdf"
+        if file_name.endswith(".pdf"):
+            file_name = file_name[:-4]
+
+        # save the file and call create pdf
+        path = "./temp/" + user_id + "_" + file_name + ".pdf"
 
         try:
             open(path, "wb").write(file.file.read())

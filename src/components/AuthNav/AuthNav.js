@@ -6,16 +6,26 @@ import {
   useState,
 } from "react";
 import { AuthContext } from "../../App";
-import { Navbar, Dropdown, Avatar } from "flowbite-react";
+import { Navbar, Dropdown, Avatar, Button, Badge } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
-import { HiLogout } from "react-icons/hi";
+import { AiOutlineShareAlt } from "react-icons/ai";
+import { buttonTheme } from "../FlowBiteStyles/Styles";
 
-const AuthNavContext = createContext({});
+const AuthNavContext = createContext({
+  isSaving: false,
+  setIsSaving: () => {},
+  isEditorPage: false,
+  setIsEditorPage: () => {},
+  authPdf: null,
+  setAuthPdf: () => {},
+});
 
-const AuthNav = () => {
+const AuthNav = (props) => {
   const { supabase } = useContext(AuthContext);
   const [userObj, setUserObj] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isEditorPage, setIsEditorPage] = useState(false);
+  const [authPdf, setAuthPdf] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +38,6 @@ const AuthNav = () => {
         if (data?.session === null || error)
           throw new Error("No session found");
 
-        console.log("AuthNav : ", data.session.user);
         const user = data.session.user;
         setUserObj({
           email: user.email,
@@ -48,7 +57,16 @@ const AuthNav = () => {
   }, [navigate, supabase]);
 
   return (
-    <AuthNavContext.Provider value={{ isSaving, setIsSaving }}>
+    <AuthNavContext.Provider
+      value={{
+        isSaving,
+        setIsSaving,
+        isEditorPage,
+        setIsEditorPage,
+        authPdf,
+        setAuthPdf,
+      }}
+    >
       <div className="h-[8vh]">
         <Navbar fluid rounded>
           <Navbar.Brand href="http://localhost:3000/dashboard">
@@ -61,7 +79,27 @@ const AuthNav = () => {
               Smart Pact
             </span>
           </Navbar.Brand>
-          <div className="flex md:order-2">
+          <div className="flex flex-row gap-3 md-order-2 items-center">
+            {isEditorPage && authPdf && (
+              <>
+                <div>{authPdf?.name}</div>
+                <div>
+                  {authPdf?.role === "editor" ? (
+                    <Badge color="warning">Editing</Badge>
+                  ) : (
+                    <Badge color="success">Viewing</Badge>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+          <div className="flex gap-4 md:order-3">
+            {isEditorPage && (
+              <Button size="xs" theme={buttonTheme}>
+                <AiOutlineShareAlt className="mr-2 h-5 w-5" />
+                <p>Share</p>
+              </Button>
+            )}
             <Dropdown
               arrowIcon={false}
               inline
@@ -82,14 +120,13 @@ const AuthNav = () => {
                 </span>
               </Dropdown.Header>
               <Dropdown.Item onClick={handleLogout}>
-                <HiLogout className="text-purple-800" />
                 <span className="text-purple-800">Sign out</span>
               </Dropdown.Item>
             </Dropdown>
-            <Navbar.Toggle />
           </div>
         </Navbar>
       </div>
+      <div>{props.children}</div>
     </AuthNavContext.Provider>
   );
 };

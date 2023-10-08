@@ -7,11 +7,13 @@ import { LoginSection, SignupSection } from "./Section";
 const FormError = (props) => {
   return (
     <div className="flex items-center ">
-      <div className={`bg-${props.color}-100 border border-${props.color}-400 text-${props.color}-700 mt-10 mx-auto px-4 py-3 rounded relative`}> 
+      <div
+        className={`bg-${props.color}-100 border border-${props.color}-400 text-${props.color}-700 mt-10 mx-auto px-4 py-3 rounded relative`}
+      >
         <span className="block sm:inline">{props.message}</span>
       </div>
     </div>
-  ); 
+  );
 };
 
 const LoginPage = (props) => {
@@ -32,7 +34,6 @@ const LoginPage = (props) => {
         if (data?.session === null || data?.session === undefined || error) {
           setAuthChecking(false);
         } else {
-          console.log("LoginPage : ", data);
           navigate("/dashboard");
         }
       })
@@ -55,7 +56,7 @@ const LoginPage = (props) => {
           if (data.error) throw new Error(data.error.message);
 
           // TODO : Show this as a success message, instead of
-          setFormError({message: "Success!", color: "green"});
+          setFormError({ message: "Success!", color: "green" });
           navigate("/dashboard");
         })
         .catch((error) => {
@@ -85,7 +86,10 @@ const LoginPage = (props) => {
           if (data.error) throw new Error(data.error.message);
 
           // TODO : Show this as a success message, instead of
-          setFormError({ message: "Check your email for confirmation!", color: "green" });
+          setFormError({
+            message: "Check your email for confirmation!",
+            color: "green",
+          });
         })
         .catch((error) => {
           console.error("LoginPage : ", error);
@@ -114,7 +118,9 @@ const LoginPage = (props) => {
           )}
         </>
       )}
-      {formError && <FormError message={formError.message} color={formError.color}  />}
+      {formError && (
+        <FormError message={formError.message} color={formError.color} />
+      )}
     </>
   );
 };

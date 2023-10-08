@@ -16,6 +16,6 @@ source .venv/bin/activate.fish
 
 - Install dependencies and start the server
 ```shell
-pip install uvicorn fastapi docker dropbox_sign supabase
+pip install uvicorn fastapi docker dropbox_sign supabase openai
 uvicorn server:app --reload
 ```

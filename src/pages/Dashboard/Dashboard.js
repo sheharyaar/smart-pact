@@ -6,7 +6,6 @@ import { DashboardCardSection } from "./Card";
 import { tabTheme } from "../../components/FlowBiteStyles/Styles";
 import { useState, useContext } from "react";
 import { AddPdfModal } from "./AddPdf";
-import { AuthNav } from "../../components/AuthNav/AuthNav";
 import { AuthContext } from "../../App";
 import { FetchPdfList, PdfDelete } from "../../components/Database/Queries";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -30,14 +29,12 @@ const DashBoard = () => {
   const handlePdfDelete = useCallback(
     (e) => {
       setDeleting(false);
-      console.log("Dashboard : handlePdfDelete", pdfDeleteRef.current);
       if (pdfDeleteRef.current === null || pdfDeleteRef.current === undefined) {
         setShowDeleteModal(false);
       } else {
         setDeleting(true);
         PdfDelete({ supabase: supabase, pdf_id: pdfDeleteRef.current })
           .then((data) => {
-            console.log("Dashboard : handlePdfDelete", data);
             window.location.reload();
           })
           .catch((error) => {
@@ -81,7 +78,6 @@ const DashBoard = () => {
           shared: shared_list || [],
         };
 
-        console.log("Dashboard : pdf_list", list);
         setFilteredList(list);
       })
       .catch((error) => {
@@ -100,7 +96,6 @@ const DashBoard = () => {
         pdfDeleteRef,
       }}
     >
-      <AuthNav />
       {showDeleteModal && (
         <Modal
           show={showDeleteModal}
@@ -125,7 +120,11 @@ const DashBoard = () => {
                 >
                   Yes, I'm sure
                 </Button>
-                <Button color="gray" onClick={() => setShowDeleteModal(false)}>
+                <Button
+                  theme={buttonTheme}
+                  color="gray"
+                  onClick={() => setShowDeleteModal(false)}
+                >
                   No, cancel
                 </Button>
               </div>
@@ -145,6 +144,7 @@ const DashBoard = () => {
             showAddCard={true}
             editEnable={true}
             cardList={filteredList?.created}
+            prefix="created"
           />
         </Tabs.Item>
         <Tabs.Item title="Shared with me" icon={BsShareFill}>
@@ -152,15 +152,9 @@ const DashBoard = () => {
             isLoading={!filteredList}
             editEnable={false}
             cardList={filteredList?.shared}
+            prefix="shared"
           />
         </Tabs.Item>
-        {/* <Tabs.Item title="Starred" icon={BiSolidStar}>
-          <DashboardCardSection
-            isLoading={!filteredList}
-            editEnable={false}
-            cardList={filteredList?.starred}
-          />
-        </Tabs.Item> */}
       </Tabs.Group>
       {/* Add PDF modal */}
       {addPdfModal && <AddPdfModal />}

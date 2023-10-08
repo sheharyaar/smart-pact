@@ -10,6 +10,7 @@ import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
 import { ToastContainer } from "react-toastify";
 
 import { createClient } from "@supabase/supabase-js";
+import { AuthNav } from "./components/AuthNav/AuthNav";
 
 const AuthContext = createContext({
   supabase: null,
@@ -26,7 +27,6 @@ const ProtectedRoute = (props) => {
     supabase.auth
       .getSession()
       .then(({ data, error }) => {
-        console.log("ProtectedRoute : ", data);
         if (data.session === null || data.session === undefined || error) {
           throw new Error("No session found");
         } else {
@@ -60,7 +60,8 @@ const ProtectedRoute = (props) => {
           {auth.isAuthed ? (
             <>
               <ToastContainer />
-              {props.children}
+              <AuthNav children={props.children} />
+              {/* {props.children} */}
             </>
           ) : (
             <Navigate to="/login" replace />

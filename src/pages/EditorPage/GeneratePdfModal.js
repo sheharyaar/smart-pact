@@ -20,7 +20,6 @@ const GeneratePdfModal = () => {
       }
 
       setIsGeneratingPdf(true);
-      console.log("GeneratePdfModal : generating pdf");
       PdfGenerateText({ instance: instance, prompt: prompt });
     },
     [setIsGeneratingPdf, instance]

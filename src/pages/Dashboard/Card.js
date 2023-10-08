@@ -30,10 +30,13 @@ const DashboardCard = (props) => {
       className="group relative"
     >
       {props.editEnable && (
-        <div className="absolute top-[5px] right-[5px] z-40 group-hover:visible invisible">
+        <div className=" absolute top-[5px] right-[5px] z-40 group-hover:visible invisible">
           <ListGroup theme={listGroupTheme}>
-            <ListGroup.Item theme={listGroupTheme} onClick={handlePdfDelete}>
-              <MdDeleteOutline className="fill-primary-900" />
+            <ListGroup.Item
+              theme={listGroupTheme.item}
+              onClick={handlePdfDelete}
+            >
+              <MdDeleteOutline className="fill-white" />
             </ListGroup.Item>
           </ListGroup>
         </div>
@@ -53,7 +56,7 @@ const DashboardCard = (props) => {
       </div>
       {props.body && (
         <div className="mt-[5px] basis-1/5">
-          <p className="font-normal text-gray-700 dark:text-gray-400">
+          <p className="font-normal text-gray-700 dark:text-gray-400 break-words">
             {props.body}
           </p>
         </div>
@@ -92,6 +95,7 @@ const DashboardCardSection = (props) => {
             props.cardList.length > 0 &&
             props.cardList.map((card) => (
               <DashboardCard
+                key={props.prefix + card.pdf_id}
                 imgSrc={
                   props?.pdf?.pdf_tumbnail ? props.pdf.pdf_tumbnail : CiImageOff
                 }

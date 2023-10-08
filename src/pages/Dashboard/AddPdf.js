@@ -25,7 +25,6 @@ const AddPdfModal = () => {
       const currFile = fileRef?.current;
       if (!currFile) return;
 
-      console.log("Currfile Size : ", currFile.size);
       // file size limit 5mb
       if (currFile.size > 5000000) {
         alert("File size is too big (max 5Mb)");
@@ -38,11 +37,10 @@ const AddPdfModal = () => {
 
       CreateUploadDoc({ supabase, formData })
         .then((data) => {
-          console.log("CreateUploadDoc : ", data);
           navigate(`/editor/${data.pdf_id}`);
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     },
     [supabase, navigate]
@@ -79,7 +77,7 @@ const AddPdfModal = () => {
           navigate(`/editor/${data.pdf_id}`);
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     },
     [supabase, navigate]
