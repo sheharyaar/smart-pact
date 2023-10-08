@@ -1,22 +1,25 @@
 import { EditorContext } from "./EditorPage";
 import { useContext, useEffect, useState } from "react";
 import { PdfAnalyseText } from "../../components/PdfEditor/PdfEditorUtils";
-import { Spinner, Sidebar } from "flowbite-react";
+import { Spinner, Modal } from "flowbite-react";
+import { modalSideBarTheme } from "../../components/FlowBiteStyles/Styles";
 
-const AnalysePdfModal = () => {
-  const { analysePdfModal, instance, document } = useContext(EditorContext);
+const AnalysePdfModal = (props) => {
+  const { instance, document, setShowAnalyseModal } = useContext(EditorContext);
   const [isAnalysingPdf, setIsAnalysingPdf] = useState(true);
   const [summary, setSummary] = useState(null);
 
   useEffect(() => {
     PdfAnalyseText({ instance: instance, document: document })
       .then((data) => {
+        console.log("PdfAnalyseText : data", data);
         const bBoxes = data.bBoxes;
         const boxes = bBoxes.map((textLine) => textLine.boundingBox);
-        const summary = data.summary;
-        const ambiguous = data.ambiguous;
+        const summary = data.data.summary;
+        const ambiguous = data.data.ambiguous;
 
-        if (bBoxes.length > 0) {
+        console.log("Boxes", boxes);
+        if (bBoxes.size > 0) {
           (async function () {
             const PSPDFKit = await import("pspdfkit");
 
@@ -25,10 +28,12 @@ const AnalysePdfModal = () => {
                 pageIndex: 0,
                 rects: boxes,
                 boundingBox: PSPDFKit.Geometry.Rect.union(boxes),
+                color: new PSPDFKit.Color({ r: 243, g: 164, b: 168 }),
               })
             );
           })();
         }
+
         setIsAnalysingPdf(false);
         setSummary({
           summary: summary,
@@ -41,29 +46,43 @@ const AnalysePdfModal = () => {
   }, [instance, document]);
 
   return (
-    <>
-      <div>
-        <Sidebar>
-          {isAnalysingPdf ? (
-            <div className="text-center">
-              <Spinner
-                size="xl"
-                className="fill-primary-700 justify-self-center"
-                aria-label="Center-aligned"
-              />
-            </div>
-          ) : (
-            <div>
-              <h2> Summary</h2>
-              <p>{summary.summary}</p>
-              <hr />
-              <h3>Actionable Points</h3>
-              <p>{summary.ambiguous}</p>
-            </div>
-          )}
-        </Sidebar>
-      </div>
-    </>
+    <Modal
+      theme={modalSideBarTheme}
+      dismissible
+      position="center-left"
+      show={true}
+      onClose={() => setShowAnalyseModal(false)}
+    >
+      <Modal.Header theme={modalSideBarTheme.header}>AI Analysis</Modal.Header>
+      <Modal.Body theme={modalSideBarTheme.body}>
+        {isAnalysingPdf ? (
+          <div className="text-center absolute top-1/2 left-1/2 -translate-x-1/2">
+            <Spinner
+              size="xl"
+              className="fill-[#4d4dc7] justify-self-center"
+              aria-label="Center-aligned"
+            />
+          </div>
+        ) : (
+          <div className="space-y-6">
+            <h2>Summary</h2>
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              {summary.summary}
+            </p>
+            {summary.ambiguous && summary.ambiguous.length > 0 && (
+              <>
+                <h2>Points to Consider</h2>
+                {summary.ambiguous.map((point, index) => (
+                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    {point.text}
+                  </p>
+                ))}
+              </>
+            )}
+          </div>
+        )}
+      </Modal.Body>
+    </Modal>
   );
 };
 

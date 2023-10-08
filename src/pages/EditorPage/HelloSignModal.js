@@ -1,5 +1,3 @@
-"use client";
-
 import { Modal } from "flowbite-react";
 import { useContext } from "react";
 import { EditorContext } from "./EditorPage";

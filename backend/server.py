@@ -10,7 +10,7 @@ from sign import (
     SignTemplateRequest,
     HelloSign,
 )
-from ai import AIGenerateRequest, AIService, AIAnalyseNode
+from ai import AIGenerateRequest, AIService, AIAnalyseRequest
 from db import (
     SupabaseAPI,
     DBPdfListReq,
@@ -184,7 +184,8 @@ async def aiGenerateDoc(req: AIGenerateRequest) -> JSONResponse:
 
 
 @app.post("/ai/analyseDoc")
-async def aiAnalyseDoc(req: List[AIAnalyseNode]) -> JSONResponse:
+async def aiAnalyseDoc(req: AIAnalyseRequest) -> JSONResponse:
+    print(req)
     if req is None:
         return JSONResponse(
             content={"message": "input is empty or null"},

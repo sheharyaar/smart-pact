@@ -1,4 +1,11 @@
-import { createContext, useState, useRef, useEffect, useContext } from "react";
+import {
+  createContext,
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
 import PdfEditor from "../../components/PdfEditor/PdfEditor";
 import HelloSignModal from "./HelloSignModal";
 import { AnalysePdfModal } from "./AnalysePdfModal";
@@ -6,15 +13,19 @@ import { AuthNav } from "../../components/AuthNav/AuthNav";
 import { useNavigate, useParams } from "react-router-dom";
 import { Spinner } from "flowbite-react";
 import { AuthContext } from "../../App";
+import { OpenAiModal } from "./OpenAiModal";
 import { FetchPdfById } from "../../components/Database/Queries";
 
 const EditorContext = createContext({
   showHelloSignModal: false,
   setHelloSignModal: () => {},
-  analysePdfModal: false,
-  setAnalysePdfModal: () => {},
+  handlePdfAnalyse: () => {},
   editorUrls: null,
   setEditorUrls: () => {},
+  openAiModal: false,
+  setOpenAiModal: () => {},
+  showAnalyseModal: false,
+  setShowAnalyseModal: () => {},
   docDiffJSON: null,
   setDocDiffJSON: () => {},
   instance: null,
@@ -23,13 +34,25 @@ const EditorContext = createContext({
 
 const EditorPage = () => {
   const [showHelloSignModal, setHelloSignModal] = useState(false);
-  const [analysePdfModal, setAnalysePdfModal] = useState(false);
+  const [openAiModal, setOpenAiModal] = useState(false);
+  const [showAnalyseModal, setShowAnalyseModal] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const instance = useRef(null);
   const navigate = useNavigate();
   const { document } = useParams();
   const { supabase } = useContext(AuthContext);
   const [editorUrls, setEditorUrls] = useState(null);
+
+  const handlePdfAnalyse = useCallback(() => {
+    // check in session storage for openai key, if found process with analyse modal
+    // else show openai modal
+    const openAiKey = sessionStorage.getItem("OPEN_AI_KEY");
+    if (openAiKey === null || openAiKey === undefined || openAiKey === "") {
+      setOpenAiModal(true);
+    } else {
+      setShowAnalyseModal(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (document == null || document === undefined) {
@@ -67,8 +90,11 @@ const EditorPage = () => {
           value={{
             showHelloSignModal,
             setHelloSignModal,
-            analysePdfModal,
-            setAnalysePdfModal,
+            handlePdfAnalyse,
+            openAiModal,
+            setOpenAiModal,
+            showAnalyseModal,
+            setShowAnalyseModal,
             editorUrls,
             setEditorUrls,
             instance,
@@ -77,8 +103,9 @@ const EditorPage = () => {
         >
           <AuthNav />
           {showHelloSignModal && <HelloSignModal />}
-          <div>
-            {analysePdfModal && <AnalysePdfModal />}
+          {openAiModal && <OpenAiModal />}
+          <div className="flex flex-rows">
+            {showAnalyseModal && <AnalysePdfModal />}
             <PdfEditor />
           </div>
         </EditorContext.Provider>

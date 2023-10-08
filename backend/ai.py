@@ -7,9 +7,6 @@ import json
 
 import requests
 
-organization = "org-7t8vOMXNQG0CPXIj5BDkVwAc"
-api_key = "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"
-
 
 class AIGenerateRequest(BaseModel):
     prompt: str
@@ -22,37 +19,28 @@ class AIAnalyseNode(BaseModel):
 
 
 class AIAnalyseRequest(BaseModel):
+    openAiKey: str
     input: List[AIAnalyseNode]
 
 
 class AIService:
     def __init__(self) -> None:
-        self.apiKey = api_key
-        self.organization = organization
-        openai.api_key = self.apiKey
+        self.apiUrl = ""
 
     """
-        Function to generate a document from Huggingface
+        Function to analyse a document from Huggingface
     """
 
-    def GenerateDoc(self, req: AIGenerateRequest) -> JSONResponse:
-        prompt = self.promptPrefix + req.prompt
-        response = requests.post(
-            self.apiUrl, headers=self.headers, data={"inputs": prompt}
-        )
-        print(response.content)
-        return response.json()
-
-    def AnalyseDoc(self, req: List[AIAnalyseNode]) -> JSONResponse:
-        print("Request: ", req)
+    def AnalyseDoc(self, req: AIAnalyseRequest) -> JSONResponse:
         response = openai.ChatCompletion.create(
+            api_key=req.openAiKey,
             model="gpt-4",
             temperature=0,
             messages=[
                 {"role": "system", "content": summarySystemPrompt},
                 {
                     "role": "user",
-                    "content": json.dumps(req, default=lambda x: x.__dict__),
+                    "content": json.dumps(req.input, default=lambda x: x.__dict__),
                 },
             ],
         )

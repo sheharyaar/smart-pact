@@ -4,6 +4,11 @@ import PSPDFKit from "pspdfkit";
 const PdfAnalyseText = (props) => {
   return new Promise(async (resolve, reject) => {
     try {
+      const openAiKey = sessionStorage.getItem("OPEN_AI_KEY");
+      if (openAiKey === null || openAiKey === undefined || openAiKey === "") {
+        throw Error("PdfAnalyseText : openAiKey is null or undefined");
+      }
+
       const instance = props.instance?.current;
       if (instance === null || instance === undefined) {
         console.error("AnalyseText : instance is undefined or null");
@@ -30,9 +35,13 @@ const PdfAnalyseText = (props) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(filteredTextLines),
+        body: JSON.stringify({
+          openAiKey: openAiKey,
+          input: filteredTextLines,
+        }),
       };
 
+      console.log("AnalyseText body: ", options.body);
       const resp = await fetch("http://localhost:8000/ai/analyseDoc", options);
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();

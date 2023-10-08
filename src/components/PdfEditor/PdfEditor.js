@@ -14,10 +14,14 @@ const PdfEditor = () => {
   const containerRef = useRef(null);
   const { supabase } = useContext(AuthContext);
   const { instance, document } = useContext(EditorContext);
-  const { editorUrls, setHelloSignModal, setAnalysePdfModal } =
+  const { editorUrls, setHelloSignModal, handlePdfAnalyse } =
     useContext(EditorContext);
 
   try {
+    if (editorUrls.diff_json === null || editorUrls.diff_json === undefined) {
+      editorUrls.diff_json = "{}";
+    }
+
     const pdfDiff = JSON.parse(editorUrls.diff_json);
     if (pdfDiff === null || pdfDiff === undefined)
       throw new Error("PdfEditor : json is null or undefined");
@@ -71,10 +75,6 @@ const PdfEditor = () => {
     },
     [handlePdfSave]
   );
-
-  const handlePdfAnalyse = useCallback(() => {
-    setAnalysePdfModal(true);
-  }, [setAnalysePdfModal]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -164,7 +164,6 @@ const PdfEditor = () => {
     return () => PSPDFKit && PSPDFKit.unload(container);
   }, [
     setHelloSignModal,
-    setAnalysePdfModal,
     instance,
     editorUrls,
     keyDownHandler,
