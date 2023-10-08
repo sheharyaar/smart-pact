@@ -75,11 +75,8 @@ const AuthNav = (props) => {
             <img
               alt="Smart pact"
               className="mr-3 h-6 sm:h-9"
-              src={`${process.env.PUBLIC_URL}/logo.svg`}
+              src={`${process.env.PUBLIC_URL}/landify/new_logo.png`}
             />
-            <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-              Smart Pact
-            </span>
           </Navbar.Brand>
           <div className="flex flex-row gap-3 md-order-2 items-center">
             {isEditorPage && authPdf && (
