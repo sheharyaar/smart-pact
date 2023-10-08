@@ -40,11 +40,11 @@ const HomePage = () => {
             </h1>
             <PrimaryButton button="Get Started"></PrimaryButton>
           </div>
-          <img
-            alt="iphone"
-            src="/landify/iphonex-1500h.png"
-            className="home-image02"
-          />
+          <div class="container">
+            <div class="device laptop">
+              <img src="https://placehold.it/640x360" />
+            </div>
+          </div>
         </div>
         <img
           alt="circle"
@@ -150,10 +150,7 @@ const HomePage = () => {
       <div className="home-achievements" id="achievements">
         <div className="home-container14">
           <h2 className="home-text23">
-            <span
-              className="home-text24"
-              style={{ fontSize: "28px", fontWeight: 700 }}
-            >
+            <span className="home-text24">
               Our 18 years of
               <span
                 dangerouslySetInnerHTML={{
@@ -162,11 +159,10 @@ const HomePage = () => {
               />
             </span>
             <br></br>
-            <span style={{ fontSize: "28px", fontWeight: 700 }}>
-              achievements
-            </span>
+            <span className="home-text24">achievements</span>
           </h2>
-          <span className="home-text27" style={{ fontSize: "18px" }}>
+          <br></br>
+          <span className="home-text27">
             With our super powers we have reached this
           </span>
         </div>
@@ -201,9 +197,10 @@ const HomePage = () => {
         <div className="home-container18">
           <img
             alt="iphone"
-            src="/landify/iphonex-1500h.png"
-            image_src="/landify/iphonex-1500h.png"
+            src="/landify/ai-1.jpg"
+            image_src="/landify/ai-1.jpg"
             className="home-image09"
+            style={{ width: "100%", height: "100%", borderRadius: "10px" }}
           />
         </div>
         <div className="home-container19">
@@ -219,7 +216,9 @@ const HomePage = () => {
       </div>
       <div className="home-feature2">
         <div className="home-container20">
-          <h2 className="Headline2 home-text30">Craft PDF with AI Magic  </h2>
+          <h2 className="Headline2 home-text30">
+            Craft PDF with AI Magic    {" "}
+          </h2>
           <span className="home-text31 Lead1">
             Experience the power of AI in PDF Creation. Our Advanced technology
             swiftly and efficiently generates text content, allowing you to
@@ -228,40 +227,41 @@ const HomePage = () => {
         </div>
         <img
           alt="iphone"
-          src="https://images.unsplash.com/photo-1535157412991-2ef801c1748b?ixlib=rb-1.2.1&amp;q=85&amp;fm=jpg&amp;crop=entropy&amp;cs=srgb&amp;w=1000"
+          src="/landify/ai-2.jpg"
           image_src="/landify/iphonex-1500h.png"
           className="home-image10"
+          style={{ borderRadius: "10px" }}
         />
       </div>
-      <div className="home-cta">
-        <div className="home-container21">
+      <div
+        className="home-cta"
+        style={{ backgroundColor: "var(--dl-color-turquoise-100)" }}
+      >
+        <div
+          className="home-container21"
+          style={{ backgroundColor: "var(--dl-color-turquoise-100)" }}
+        >
           <div className="home-container22">
             <h2 className="Headline2 home-text32">
               Templates Tailored to your needs
             </h2>
+            <br></br>
             <span className="home-text33 Lead1">
               Gain access to a customizable template Library that caters to your
               unique needs. From Contracts to forms and more, our templates are
               designed to make your document creation process seamless and
               tailored to your requirements.  
             </span>
-            <span className="home-text34 Subtitle2">
+            {/* <span className="home-text34 Subtitle2">
               <span className="home-text35">Get the App</span>
-            </span>
+            </span> */}
           </div>
           <div className="home-container23">
-            <img
-              alt="iphone"
-              src="/landify/iphonex-1500h.png"
-              image_src="/landify/iphonex-1500h.png"
-              className="home-image11"
-            />
-            <img
-              alt="iphone"
-              src="/landify/iphonex-1500h.png"
-              image_src="/landify/iphonex-1500h.png"
-              className="home-image12"
-            />
+            <div class="container-tablet">
+              <div class="device tablet landscape">
+                <img src="https://placehold.it/640x360" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -269,7 +269,7 @@ const HomePage = () => {
         <footer className="home-container24">
           <img
             alt="logo"
-            src="/landify/logotype-light.svg"
+            src="/landify/dark-logo.png"
             className="home-image13"
           />
           <div className="home-container25">
@@ -283,7 +283,7 @@ const HomePage = () => {
           <div className="home-divider2"></div>
           <div className="home-container26">
             <span className="home-text42 Body2">
-              © 2020 Landify UI Kit. All rights reserved
+              © 2020 Smart Pact. All rights reserved
             </span>
             <div className="home-container27">
               <a

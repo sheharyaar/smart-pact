@@ -19,11 +19,7 @@ const Navbar = () => {
     <div data-role="Header" className="home-header-container">
       <header className="home-header">
         <div className="home-logo">
-          <img
-            alt="logo"
-            src="/landify/logotype-dark.svg"
-            className="home-image"
-          />
+          <img alt="logo" src="/landify/new_logo.png" className="home-image" />
         </div>
         <span
           className="home-text00 clickable"
