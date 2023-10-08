@@ -9,7 +9,6 @@ import {
 import PdfEditor from "../../components/PdfEditor/PdfEditor";
 import HelloSignModal from "./HelloSignModal";
 import { AnalysePdfModal } from "./AnalysePdfModal";
-import { AuthNav } from "../../components/AuthNav/AuthNav";
 import { useNavigate, useParams } from "react-router-dom";
 import { Spinner } from "flowbite-react";
 import { AuthContext } from "../../App";
@@ -101,7 +100,6 @@ const EditorPage = () => {
             document,
           }}
         >
-          <AuthNav />
           {showHelloSignModal && <HelloSignModal />}
           {openAiModal && <OpenAiModal />}
           <div className="flex flex-rows">

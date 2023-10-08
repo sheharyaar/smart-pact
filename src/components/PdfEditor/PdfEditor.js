@@ -4,6 +4,7 @@ import { PdfPublish, PdfSave } from "./PdfEditorUtils";
 import { AuthContext } from "../../App";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { AuthNavContext } from "../AuthNav/AuthNav";
 
 const UnneededPlugins = ["signature", "note"];
 
@@ -13,6 +14,7 @@ const aiSvg = `<svg role="graphics-symbol" viewBox="0 0 14 17" class="sparkles" 
 const PdfEditor = () => {
   const containerRef = useRef(null);
   const { supabase } = useContext(AuthContext);
+  const { setIsEditorPage, setAuthPdfName } = useContext(AuthNavContext);
   const { instance, document } = useContext(EditorContext);
   const { editorUrls, setHelloSignModal, handlePdfAnalyse } =
     useContext(EditorContext);
@@ -158,6 +160,8 @@ const PdfEditor = () => {
         keyDownHandler
       );
 
+      setIsEditorPage(true);
+      setAuthPdfName(editorUrls.pdf_name);
       // save the thumbnail to the database
     })();
 
@@ -171,6 +175,8 @@ const PdfEditor = () => {
     handlePdfPublish,
     document,
     handlePdfAnalyse,
+    setAuthPdfName,
+    setIsEditorPage,
   ]);
 
   return (

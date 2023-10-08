@@ -6,7 +6,6 @@ import { DashboardCardSection } from "./Card";
 import { tabTheme } from "../../components/FlowBiteStyles/Styles";
 import { useState, useContext } from "react";
 import { AddPdfModal } from "./AddPdf";
-import { AuthNav } from "../../components/AuthNav/AuthNav";
 import { AuthContext } from "../../App";
 import { FetchPdfList, PdfDelete } from "../../components/Database/Queries";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
@@ -100,7 +99,6 @@ const DashBoard = () => {
         pdfDeleteRef,
       }}
     >
-      <AuthNav />
       {showDeleteModal && (
         <Modal
           show={showDeleteModal}
@@ -125,7 +123,11 @@ const DashBoard = () => {
                 >
                   Yes, I'm sure
                 </Button>
-                <Button color="gray" onClick={() => setShowDeleteModal(false)}>
+                <Button
+                  theme={buttonTheme}
+                  color="gray"
+                  onClick={() => setShowDeleteModal(false)}
+                >
                   No, cancel
                 </Button>
               </div>

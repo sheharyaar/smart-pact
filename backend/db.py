@@ -192,7 +192,7 @@ class SupabaseAPI:
             # create a db entry in pdf
             # returns the pdf_id creader
             print("Creating pdf entry", req.user_id)
-            pdf_name = req.pdf_name + ".pdf"
+            pdf_name = req.pdf_name
             data, count = self.client.rpc(
                 "create_pdf", {"req_user_id": req.user_id, "req_pdf_name": pdf_name}
             ).execute()
@@ -258,11 +258,12 @@ class SupabaseAPI:
         file_name: Annotated[str, Form()],
         user_id: Annotated[str, Form()],
     ) -> JSONResponse:
-        # save the file and call create pdf
-        path = "./temp/" + user_id + "_" + file_name
         # check if the file name has pdf extension
-        if not file_name.endswith(".pdf"):
-            path = path + ".pdf"
+        if file_name.endswith(".pdf"):
+            file_name = file_name[:-4]
+
+        # save the file and call create pdf
+        path = "./temp/" + user_id + "_" + file_name + ".pdf"
 
         try:
             open(path, "wb").write(file.file.read())

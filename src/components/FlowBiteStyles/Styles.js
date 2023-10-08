@@ -283,7 +283,7 @@ const formTheme = {
 };
 
 const buttonTheme = {
-  base: "group flex items-stretch items-center justify-center p-0.5 text-center font-bold relative focus:z-10 focus:outline-none",
+  base: "group flex items-stretch items-center justify-center p-0.5 text-center relative focus:z-10 focus:outline-none",
   fullSized: "w-full",
   color: {
     dark: "text-white bg-gray-800 border border-transparent enabled:hover:bg-gray-900 focus:ring-4 focus:ring-gray-300 dark:bg-gray-800 dark:enabled:hover:bg-gray-700 dark:focus:ring-gray-800 dark:border-gray-700",
@@ -369,7 +369,7 @@ const buttonTheme = {
     },
   },
   label:
-    "ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-200 font-semibold text-primary-800",
+    "ml-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary-200 text-primary-800",
   outline: {
     color: {
       gray: "border border-gray-900 dark:border-white",
@@ -454,11 +454,11 @@ const listGroupTheme = {
     base: "list-none rounded-md border border-primary-700 bg-white text-sm font-medium text-gray-900 text-left",
   },
   item: {
-    base: "[&>*]:first:rounded-t-lg [&>*]:last:rounded-b-lg [&>*]:last:border-b-0",
+    base: "[&>*]:first:rounded-t-sm [&>*]:last:rounded-b-sm [&>*]:last:border-b-0",
     link: {
-      base: "flex items-center w-full border-b border-gray-200 py-2 px-4 dark:border-gray-600",
+      base: "flex items-center w-full py-2 px-4 dark:border-gray-600",
       active: {
-        off: "hover:bg-primary-500 hover:text-primary-700 focus:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-700",
+        off: "bg-primary-700 hover:bg-primary-900 hover:text-primary-800 focus:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-700",
         on: "bg-primary-700 text-white dark:bg-gray-800",
       },
       href: {
