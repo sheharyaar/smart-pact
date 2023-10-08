@@ -1,8 +1,11 @@
-import StoreBanner from "./store-banner";
 import React, { useState } from "react";
+import { Button } from "flowbite-react";
+import { buttonTheme } from "../../components/FlowBiteStyles/Styles";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [scrollToSection, setScrollToSection] = useState(null);
+  const navigate = useNavigate();
 
   const handleScrollTo = (sectionId) => {
     const element = document.getElementById(sectionId);
@@ -51,14 +54,10 @@ const Navbar = () => {
         >
           Contact Us
         </span>
+        <Button theme={buttonTheme} onClick={() => navigate(`/login`)}>
+          Get Started
+        </Button>
         <div className="home-container01"></div>
-        <div data-role="BurgerMenu" className="home-burger-menu">
-          <svg viewBox="0 0 1024 1024" className="home-menu1">
-            <path d="M810.667 725.333h-597.333c-47.061 0-85.333 38.272-85.333 85.333s38.272 85.333 85.333 85.333h597.333c47.061 0 85.333-38.272 85.333-85.333s-38.272-85.333-85.333-85.333z"></path>
-            <path d="M810.667 426.667h-597.333c-47.061 0-85.333 38.272-85.333 85.333s38.272 85.333 85.333 85.333h597.333c47.061 0 85.333-38.272 85.333-85.333s-38.272-85.333-85.333-85.333z"></path>
-            <path d="M810.667 128h-597.333c-47.061 0-85.333 38.272-85.333 85.333s38.272 85.333 85.333 85.333h597.333c47.061 0 85.333-38.272 85.333-85.333s-38.272-85.333-85.333-85.333z"></path>
-          </svg>
-        </div>
       </header>
       <div data-role="MobileMenu" className="home-mobile-menu">
         <div className="home-top">
