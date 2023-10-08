@@ -27,7 +27,6 @@ const ProtectedRoute = (props) => {
     supabase.auth
       .getSession()
       .then(({ data, error }) => {
-        console.log("ProtectedRoute : ", data);
         if (data.session === null || data.session === undefined || error) {
           throw new Error("No session found");
         } else {

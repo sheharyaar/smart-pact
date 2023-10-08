@@ -12,13 +12,11 @@ const AnalysePdfModal = (props) => {
   useEffect(() => {
     PdfAnalyseText({ instance: instance, document: document })
       .then((data) => {
-        console.log("PdfAnalyseText : data", data);
         const bBoxes = data.bBoxes;
         const boxes = bBoxes.map((textLine) => textLine.boundingBox);
         const summary = data.data.summary;
         const ambiguous = data.data.ambiguous;
 
-        console.log("Boxes", boxes);
         if (bBoxes.size > 0) {
           (async function () {
             const PSPDFKit = await import("pspdfkit");

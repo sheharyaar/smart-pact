@@ -6,7 +6,7 @@ import {
   useState,
 } from "react";
 import { AuthContext } from "../../App";
-import { Navbar, Dropdown, Avatar, Button } from "flowbite-react";
+import { Navbar, Dropdown, Avatar, Button, Badge } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineShareAlt } from "react-icons/ai";
 import { buttonTheme } from "../FlowBiteStyles/Styles";
@@ -16,8 +16,8 @@ const AuthNavContext = createContext({
   setIsSaving: () => {},
   isEditorPage: false,
   setIsEditorPage: () => {},
-  authPdfName: null,
-  setAuthPdfName: () => {},
+  authPdf: null,
+  setAuthPdf: () => {},
 });
 
 const AuthNav = (props) => {
@@ -25,7 +25,7 @@ const AuthNav = (props) => {
   const [userObj, setUserObj] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isEditorPage, setIsEditorPage] = useState(false);
-  const [authPdfName, setAuthPdfName] = useState(null);
+  const [authPdf, setAuthPdf] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,7 +38,6 @@ const AuthNav = (props) => {
         if (data?.session === null || error)
           throw new Error("No session found");
 
-        console.log("AuthNav : ", data.session.user);
         const user = data.session.user;
         setUserObj({
           email: user.email,
@@ -64,8 +63,8 @@ const AuthNav = (props) => {
         setIsSaving,
         isEditorPage,
         setIsEditorPage,
-        authPdfName,
-        setAuthPdfName,
+        authPdf,
+        setAuthPdf,
       }}
     >
       <div className="h-[8vh]">
@@ -80,8 +79,19 @@ const AuthNav = (props) => {
               Smart Pact
             </span>
           </Navbar.Brand>
-          <div className="flex md-order-2">
-            {isEditorPage && authPdfName && <div>{authPdfName}</div>}
+          <div className="flex flex-row gap-3 md-order-2 items-center">
+            {isEditorPage && authPdf && (
+              <>
+                <div>{authPdf?.name}</div>
+                <div>
+                  {authPdf?.role === "editor" ? (
+                    <Badge color="warning">Editing</Badge>
+                  ) : (
+                    <Badge color="success">Viewing</Badge>
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <div className="flex gap-4 md:order-3">
             {isEditorPage && (

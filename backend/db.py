@@ -112,10 +112,9 @@ class SupabaseAPI:
             # user_id has the role of an editor
             data, error = (
                 self.client.table("global_pdf")
-                .select("pdf_id, pdf(pdf_name)")
+                .select("pdf_id, role, pdf(pdf_name)")
                 .eq("user_id", req.user_id)
                 .eq("pdf_id", req.pdf_id)
-                .eq("role", "editor")
                 .execute()
             )
             if data[1] is None:
@@ -161,6 +160,7 @@ class SupabaseAPI:
                         "pdf_url": pdf_file["downloadUrl"],
                         "diff_json": None,
                         "pdf_name": data[1][0]["pdf"]["pdf_name"],
+                        "role": data[1][0]["role"],
                     },
                     status_code=200,
                     media_type="application/json",
@@ -174,6 +174,7 @@ class SupabaseAPI:
                     "pdf_url": pdf_file["downloadUrl"],
                     "diff_json": json_text,
                     "pdf_name": data[1][0]["pdf"]["pdf_name"],
+                    "role": data[1][0]["role"],
                 },
                 status_code=200,
                 media_type="application/json",

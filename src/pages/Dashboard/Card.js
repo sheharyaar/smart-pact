@@ -95,6 +95,7 @@ const DashboardCardSection = (props) => {
             props.cardList.length > 0 &&
             props.cardList.map((card) => (
               <DashboardCard
+                key={props.prefix + card.pdf_id}
                 imgSrc={
                   props?.pdf?.pdf_tumbnail ? props.pdf.pdf_tumbnail : CiImageOff
                 }

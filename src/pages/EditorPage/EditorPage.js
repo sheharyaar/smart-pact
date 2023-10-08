@@ -59,12 +59,11 @@ const EditorPage = () => {
     }
     FetchPdfById({ supabase: supabase, pdf_id: document })
       .then((data) => {
-        console.log("Editor page :", data);
-
         setEditorUrls({
           pdf_url: data.pdf_url,
           diff_obj: data.diff_obj,
           pdf_name: data.pdf_name,
+          role: data.role,
         });
         setIsEditable(true);
       })

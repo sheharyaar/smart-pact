@@ -34,7 +34,6 @@ const CreateFromTemplate = (props) => {
 
       if (response.status >= 200 && response.status < 300) {
         const data = await response.json();
-        console.log("CreateFromTemplate : ", data);
         resolve(data);
       } else {
         reject(new Error(`HTTP Error ${response.status}`));
@@ -63,8 +62,6 @@ const DropBoxTemplate = () => {
       );
 
       if (!template) throw new Error("Template not found");
-      console.log(template.template_id);
-      console.log(template.title);
       CreateFromTemplate({
         supabase: supabase,
         token: signToken,
@@ -87,7 +84,6 @@ const DropBoxTemplate = () => {
   useEffect(() => {
     FetchTemplates({ token: signToken, page: 1 })
       .then((data) => {
-        console.log("DropBoxTemplate : ", data);
         if (data.templates.length > 0) {
           if (templates.length > 0) {
             setTemplates([...templates, ...data.templates]);

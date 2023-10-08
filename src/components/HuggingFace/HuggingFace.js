@@ -1,13 +1,3 @@
-/*
-    AI Integrations :
-    - Analysis of given contents
-    - Return text on generation
-*/
-
-const HFAnalyseText = (props) => {
-  console.log(props);
-};
-
 const HFGenerateText = (prompt) => {
   return new Promise(async (resolve, reject) => {
     const requestOptions = {
@@ -25,7 +15,6 @@ const HFGenerateText = (prompt) => {
       );
       if (response.status >= 200 && response.status < 300) {
         const data = await response.json();
-        console.log("HFGenerateText : ", data);
         resolve(data);
       } else {
         reject(new Error(`HTTP Error ${response.status}`));
@@ -37,4 +26,4 @@ const HFGenerateText = (prompt) => {
   });
 };
 
-export { HFAnalyseText, HFGenerateText };
+export { HFGenerateText };

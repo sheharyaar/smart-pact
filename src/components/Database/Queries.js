@@ -21,7 +21,6 @@ const FetchPdfList = (props) => {
 
       if (response.status >= 200 && response.status < 300) {
         const data = await response.json();
-        console.log("FetchPdfList : ", data);
         resolve(data);
       } else {
         reject(new Error(`HTTP Error ${response.status}`));
@@ -38,11 +37,9 @@ const FetchPdfById = (props) => {
   return new Promise(async (resolve, reject) => {
     try {
       const data = await props.supabase.auth.getSession();
-      console.log(data);
       if (data.error) throw data.error;
 
       const user_id = data.data.session.user.id;
-      console.log("FetchPdfById : ", user_id);
       const options = {
         method: "POST",
         headers: {
@@ -57,7 +54,6 @@ const FetchPdfById = (props) => {
       const resp = await fetch("http://localhost:8000/api/fetchPdf", options);
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();
-        console.log("FetchPdfById : ", data);
         let pdfDiff = JSON.parse(data.diff_json);
         if (pdfDiff === null || pdfDiff === undefined) {
           console.error("FetchPdfById : error parsing diff json");
@@ -68,6 +64,7 @@ const FetchPdfById = (props) => {
           pdf_url: data.pdf_url,
           diff_obj: pdfDiff,
           pdf_name: data.pdf_name,
+          role: data.role,
         });
         resolve(data);
       } else {
@@ -96,7 +93,6 @@ const CreateEmptyDoc = (props) => {
           pdf_name: props.document_title,
         }),
       };
-      console.log(options.body);
 
       const resp = await fetch(
         "http://localhost:8000/api/createEmptyPdf",
@@ -105,7 +101,6 @@ const CreateEmptyDoc = (props) => {
 
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();
-        console.log("CreateEmptyDoc : ", data);
         resolve(data);
       } else {
         reject(new Error(`HTTP Error ${resp.status}`));
@@ -137,7 +132,6 @@ const CreateUploadDoc = (props) => {
 
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();
-        console.log("CreateUploadPDf : ", data);
         resolve(data);
       } else {
         reject(new Error(`HTTP Error ${resp.status}`));
@@ -168,8 +162,7 @@ const PdfDelete = (props) => {
 
       const resp = await fetch("http://localhost:8000/api/deletePdf", options);
       if (resp.status >= 200 && resp.status < 300) {
-        const data = await resp.json();
-        console.log("PdfDelete : ", data);
+        await resp.json();
         resolve("success");
       } else {
         reject(new Error(`HTTP Error ${resp.status}`));

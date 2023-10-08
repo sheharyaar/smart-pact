@@ -41,11 +41,9 @@ const PdfAnalyseText = (props) => {
         }),
       };
 
-      console.log("AnalyseText body: ", options.body);
       const resp = await fetch("http://localhost:8000/ai/analyseDoc", options);
       if (resp.status >= 200 && resp.status < 300) {
         const data = await resp.json();
-        console.log("AnalyseText : ", JSON.parse(data.content));
 
         // fetch bounding box from global textLines and add them to the parsed
         // ambiguous object for each entry
@@ -194,7 +192,6 @@ const PdfSave = (props) => {
         console.error("PdfSave : instance is undefined or null");
         return;
       }
-      console.log("Saving...");
 
       const diff_json = await instance.exportInstantJSON();
       if (diff_json === null || diff_json === undefined) {
@@ -256,11 +253,9 @@ const PdfPublish = (props) => {
         body: formData,
       };
 
-      console.log("PdfPublish body: ", options.body);
       const resp = await fetch("http://localhost:8000/api/publishPdf", options);
       if (resp.status >= 200 && resp.status < 300) {
-        const data = await resp.json();
-        console.log("PdfPublish : ", data);
+        await resp.json();
         resolve("success");
       } else {
         reject(new Error(`HTTP Error ${resp.status}`));
