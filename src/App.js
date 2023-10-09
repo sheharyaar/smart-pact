@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import { Spinner } from "flowbite-react";
 import { ErrorPage } from "./pages/ErrorPage/ErrorPage";
 import { ToastContainer } from "react-toastify";
+import { ForgotPassWord, ResetPassWord } from "./pages/LoginPage/ForgotPassword";
 
 import { createClient } from "@supabase/supabase-js";
 import { AuthNav } from "./components/AuthNav/AuthNav";
@@ -91,6 +92,8 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage login={true} />} />
+          <Route path="/forgotpassword" element={<ForgotPassWord />} />
+          <Route path= "/resetpassword" element= {<ResetPassWord/>} />
           <Route path="/signup" element={<LoginPage login={false} />} />
           <Route
             path="/editor/:document"

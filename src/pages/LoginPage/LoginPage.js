@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Spinner } from "flowbite-react";
 import { LoginSection, SignupSection } from "./Section";
 
+
 const FormError = (props) => {
   return (
     <div className="flex items-center ">
@@ -84,6 +85,9 @@ const LoginPage = (props) => {
         })
         .then((data) => {
           if (data.error) throw new Error(data.error.message);
+          if(e.target[0].value !== e.target[1].value){
+            throw Error("Passwords Don't match")
+        }
 
           // TODO : Show this as a success message, instead of
           setFormError({
