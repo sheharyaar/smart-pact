@@ -52,7 +52,7 @@ const HelloSignOauth = () => {
 
     // save the document
     const state = randomString(8);
-    const url = `https://app.hellosign.com/oauth/authorize?response_type=code&client_id=973b3a1562379a15e47fb44b611b8388&state=${state}`;
+    const url = `https://app.hellosign.com/oauth/authorize?response_type=code&client_id=${process.env.REACT_APP_DROPBOX_SIGN_CLIENT_ID}&state=${state}`;
 
     // Open the current for authentication
     window.open(url, "_blank");
