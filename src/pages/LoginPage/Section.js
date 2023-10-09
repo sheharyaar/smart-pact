@@ -8,7 +8,7 @@ const LoginSection = (props) => {
   return (
     <>
     <div className=" text-6xl text-purple-800 drop-shadow-xl font-extrabold mt-32 text-center">Smart Pact</div>
-    <form className="flex max-w-md flex-col gap-4 mt-14 mx-auto  bg-white shadow-2xl shadow-gray-300 px-10 py-10 rounded-lg overflow-hidden" onSubmit={props.handleLogin}>
+    <form className="flex max-w-md flex-col gap-4 mt-14 mx-auto bg-white shadow-2xl shadow-gray-300 px-10 py-10 rounded-lg overflow-hidden" onSubmit={props.handleLogin}>
       <div>
         <div className="mb-2 block">
           <Label theme={formTheme.label} htmlFor="sb-email" value="Email Address" />
@@ -36,7 +36,7 @@ const LoginSection = (props) => {
       > Sign up</a></div>  
       <Button theme={buttonTheme} color="purple" size="md" type="submit">Sign in</Button>
       <a
-        href="#"
+        href="/forgotpassword"
         className="font-bold text-purple-800 hover:underline dark:text-primary-500"
       > Forgot Password?</a>
     </form>
@@ -54,7 +54,7 @@ const SignupSection = (props) => {
     >
       <div >
           <div className="circle ml-36 mt-10">
-            <img className="profile-pic" src="https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"/>
+            <img className="profile-pic" src="https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg" alt="upload"/>
 
           </div>
           <div className="p-image">
