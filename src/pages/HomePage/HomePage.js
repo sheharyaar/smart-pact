@@ -42,7 +42,7 @@ const HomePage = () => {
           </div>
           <div class="container">
             <div class="device laptop">
-              <img src="https://placehold.it/640x360" />
+              <img src="/landify/ss-pdf-1.png" />
             </div>
           </div>
         </div>
@@ -259,7 +259,7 @@ const HomePage = () => {
           <div className="home-container23">
             <div class="container-tablet">
               <div class="device tablet landscape">
-                <img src="https://placehold.it/640x360" />
+                <img src="/landify/ss-pdf-2.png" />
               </div>
             </div>
           </div>
