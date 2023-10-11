@@ -1,10 +1,11 @@
+<img src="./ss-home.png" width="800px" height="418px"/>
+
 - [Prerequisites](#prerequisites)
   - [Required Environment variables](#required-environment-variables)
   - [Supabase DB Definitions](#supabase-db-definitions)
   - [S3 bucket setup](#s3-bucket-setup)
 - [Running the application](#running-the-application)
-
-
+  
 # Prerequisites
 
 ## Required Environment variables
@@ -93,3 +94,5 @@ docker compose up --build -d
 ```
 
 4. Open `http://localhost` in your browser.
+
+<img src="./ss-pdf-min.png" width="800px" height="418px"/>
